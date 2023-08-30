@@ -1,0 +1,17 @@
+.app {
+    display: grid;
+    flex-direction: column;
+    height: 98vh;
+    grid-template-rows: 1fr 2fr;
+    grid-template-areas:
+        'header'
+        'app';
+
+    box-sizing: border-box;
+    background-color: #222;
+
+    border-radius: 4vw;
+
+    padding: 7vw;
+    overflow-y: scroll;
+}

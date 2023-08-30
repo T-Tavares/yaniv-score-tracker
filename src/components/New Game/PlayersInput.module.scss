@@ -1,0 +1,22 @@
+.players-amount {
+    display: flex;
+    justify-content: space-between;
+
+    align-items: center;
+    margin: 0.5rem 2rem;
+
+    button {
+        outline: none;
+        border: none;
+
+        height: 3rem;
+        aspect-ratio: 1/1;
+
+        font-size: 1.2rem;
+
+        border-radius: 50%;
+        text-align: center;
+        background-color: #9c3b3b;
+        color: #fff;
+    }
+}

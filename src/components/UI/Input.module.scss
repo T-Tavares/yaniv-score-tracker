@@ -1,0 +1,23 @@
+.input {
+    padding: 1rem;
+
+    margin: none;
+    border: none;
+    border-radius: 0.5rem;
+
+    outline: none;
+
+    &:last-of-type {
+        margin-bottom: 0.5rem;
+    }
+}
+.label:not(input) {
+    &:first-of-type {
+        margin: 0;
+        margin-bottom: 0.5rem;
+    }
+
+    margin: 0.5rem 0;
+    align-self: center;
+    color: #fff;
+}

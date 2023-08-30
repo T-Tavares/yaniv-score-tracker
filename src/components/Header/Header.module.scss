@@ -1,0 +1,23 @@
+.header {
+    grid-area: header;
+
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+        color: #ffd373;
+    }
+
+    // &::after {
+    //     position: absolute;
+    //     top: 25vh;
+    //     content: '';
+    //     height: 2px;
+    //     width: 82vw;
+    //     background-color: #d9b871;
+    // }
+    img {
+        width: 30vw;
+    }
+}

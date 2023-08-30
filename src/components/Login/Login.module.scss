@@ -1,0 +1,13 @@
+.login,
+.login-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login {
+    justify-content: space-between;
+    label {
+        color: #fff;
+        text-align: center;
+    }
+}
