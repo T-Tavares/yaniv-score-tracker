@@ -1,3 +1,5 @@
+@import '../UI/colours.module.scss';
+
 .header {
     grid-area: header;
 
@@ -6,18 +8,24 @@
     margin-bottom: 2rem;
 
     h1 {
-        color: #ffd373;
+        color: $header-text;
     }
 
-    // &::after {
-    //     position: absolute;
-    //     top: 25vh;
-    //     content: '';
-    //     height: 2px;
-    //     width: 82vw;
-    //     background-color: #d9b871;
-    // }
     img {
         width: 30vw;
+    }
+}
+
+.menu {
+    color: $text;
+    list-style: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+
+    button {
+        padding: 0.8rem;
+        font-size: 1rem;
+        width: 45%;
     }
 }

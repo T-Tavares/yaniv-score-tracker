@@ -6,6 +6,7 @@ export default function Input(props) {
         <React.Fragment>
             <label className={classes.label}>{props.label}</label>
             <input
+                data-identifier={props.dataset}
                 className={classes.input}
                 placeholder={props.placeholder}
                 type={props.type ? props.type : 'text'}

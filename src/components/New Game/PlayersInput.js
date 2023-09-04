@@ -1,6 +1,6 @@
 import classes from './PlayersInput.module.scss';
 import React, {useState} from 'react';
-import Input from '../UI/Input';
+import Input from '../UI/Input.js';
 
 export default function PlayersInput(props) {
     const [playersInputs, setPlayersInputs] = useState(2);

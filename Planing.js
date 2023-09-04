@@ -5,6 +5,7 @@ _____________GamesDB pattern_____________
 
 YanivGamesDB = [
     {
+        
         gameName: '46 Potter Av',
         gamePasscode: 'XXXXX',
 
@@ -30,15 +31,15 @@ YanivGamesDB = [
         players: [
             {
                 name: Thiago,
-                points: 0,
+                points: [0],
             }
             {
                 name: Alina,
-                points: 0,
+                points: [0],
             }
             {
                 name: TJ,
-                points: 0,
+                points: [0],
             }
             ...
         ]

@@ -1,7 +1,8 @@
 import classes from './NewGame.module.scss';
-import Button from '../UI/Button';
-import Input from '../UI/Input';
-import PlayersInput from './PlayersInput';
+import Button from '../UI/Button.js';
+import Input from '../UI/Input.js';
+import PlayersInput from './PlayersInput.js';
+import {_addNewGameDB} from '../../database/firebaseUtils.js';
 
 export default function NewGame() {
     const newGameHandler = e => {
@@ -13,24 +14,22 @@ export default function NewGame() {
         // Obj INIT()
         const newGameObj = {
             gameName: '',
-            gamePasscode: '',
+            gamePassword: '',
             players: [],
             gamesPlayed: [],
         };
 
         inputs.forEach((input, index) => {
             if (index === 0) newGameObj.gameName = input.value;
-            if (index === inputs.length - 1) newGameObj.gamePasscode = input.value;
+            if (index === inputs.length - 1) newGameObj.gamePassword = input.value;
             if (index > 0 && index < inputs.length - 1)
                 newGameObj.players.push({
                     playerName: input.value,
-                    points: 0,
+                    points: {0: 0},
                 });
         });
 
-        // TODO CONNECT WITH FIREBASE
-
-        console.log(newGameObj);
+        _addNewGameDB(newGameObj, newGameObj.gameName);
     };
 
     return (
