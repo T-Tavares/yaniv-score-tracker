@@ -4,10 +4,10 @@ import Login from './components/Login/Login.js';
 import NewGame from './components/New Game/NewGame.js';
 import Game from './components/Game/Game.js';
 
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 
 function App() {
-    const [appScreen, setAppScreen] = useState('login');
+    const [appScreen, setAppScreen] = useState('');
     const [gameID, setGameID] = useState('');
 
     // --------------------------- HANDLERS --------------------------- //
@@ -19,25 +19,21 @@ function App() {
     };
 
     const logoutHandler = () => {
-        setAppScreen('login');
+        setAppScreen('');
         setGameID('');
     };
 
     // ---------- BUILDING SCREEN COMPONENT TO BE RENDERED  ----------- //
-    let appScreenEl;
 
-    switch (appScreen) {
-        case 'new game':
-            appScreenEl = <NewGame />;
-            break;
-
-        case 'logged':
-            // WILL BE CHANGED FOR THE GAME SCREEN
-            appScreenEl = <Game gameID={gameID} />;
-            break;
-        default:
-            appScreenEl = <Login newGameHandler={newGameHandler} loginHandler={loginHandler} />;
-            break;
+    function AppScreenEl() {
+        switch (appScreen) {
+            case 'new game':
+                return <NewGame loginHandler={loginHandler} />;
+            case 'logged':
+                return <Game gameID={gameID} />;
+            default:
+                return <Login newGameHandler={newGameHandler} loginHandler={loginHandler} />;
+        }
     }
 
     // --------------------- APP COMPONENT OUTPUT --------------------- //
@@ -45,7 +41,7 @@ function App() {
     return (
         <div className={classes.app}>
             <Header logoutHandler={logoutHandler} />
-            {appScreenEl}
+            <AppScreenEl />
         </div>
     );
 }

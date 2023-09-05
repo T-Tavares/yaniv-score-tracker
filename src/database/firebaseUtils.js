@@ -21,7 +21,7 @@ export async function _addNewGameDB(gameObj, newGameName) {
     // If name is clear, create New Game
     if (!isDuplicate) {
         const response = await push(ref(db, `games/`), gameObj);
-        console.log(response);
+        return response.key;
     }
 }
 
@@ -87,5 +87,3 @@ export async function _updateScoreDB(id, scoreArr) {
         await set(ref(db, `games/${id}/players/${n}/points`), scoreDataArr[n]);
     }
 }
-
-// _updateScoreDB('-NdDV96Zz-mqwjmJYGqY', [2, 3, 4, 5, 6]);

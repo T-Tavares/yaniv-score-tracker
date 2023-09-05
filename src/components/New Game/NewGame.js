@@ -4,7 +4,7 @@ import Input from '../UI/Input.js';
 import PlayersInput from './PlayersInput.js';
 import {_addNewGameDB} from '../../database/firebaseUtils.js';
 
-export default function NewGame() {
+export default function NewGame({loginHandler}) {
     const newGameHandler = e => {
         e.preventDefault();
         const inputs = [...e.target.querySelectorAll('input')];
@@ -29,7 +29,17 @@ export default function NewGame() {
                 });
         });
 
-        _addNewGameDB(newGameObj, newGameObj.gameName);
+        const logNewGame = async () => {
+            new Promise(async (resolve, reject) => {
+                try {
+                    const gameID = await _addNewGameDB(newGameObj, newGameObj.gameName);
+                    loginHandler(gameID);
+                } catch (err) {
+                    console.error('Error loggin the New Game', err);
+                }
+            });
+        };
+        logNewGame();
     };
 
     return (
