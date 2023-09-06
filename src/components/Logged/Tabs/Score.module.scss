@@ -1,0 +1,78 @@
+@import '../../UI/colours.module.scss';
+
+.score-table {
+    color: #ccc;
+    width: 82vw; // to match the padding
+
+    border-radius: 0.3rem;
+    border-collapse: collapse;
+    overflow: hidden;
+
+    // ROWS
+    tr {
+        // Odds and Even BG Color Swap
+        background-color: #2c2c2c;
+        &:nth-of-type(odd) {
+            background-color: #555;
+        }
+        // Header BG
+        &.table-header {
+            background-color: #111;
+            // button {
+            //     margin: 0 0 0 68vw;
+            // }
+        }
+    }
+
+    // CELLS
+    th {
+        font-weight: 100;
+        padding: 0.5rem;
+        &:first-child {
+            text-align: left;
+        }
+    }
+
+    // NUMBER INPUTS
+    input {
+        margin: 0;
+        padding: 0;
+
+        width: 2rem;
+        height: 2rem;
+        outline: none;
+        border: none;
+        border-radius: 0.2rem;
+
+        text-align: center;
+    }
+
+    // SUBMIT BUTTON
+    button {
+        width: 2rem;
+        height: 2rem;
+        outline: none;
+        border: none;
+
+        text-align: center;
+        font-size: 1.2rem;
+        color: #fff;
+        background-color: $primary-btn;
+        border-radius: 0.2rem;
+        border: 1px solid $primary-btn-light;
+    }
+
+    /* ------------------- HIDE NUMBER INPUT ARROW -------------------- */
+
+    /* Chrome, Safari, Edge, Opera */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /* Firefox */
+    input[type='number'] {
+        -moz-appearance: textfield;
+    }
+}

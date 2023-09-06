@@ -10,7 +10,7 @@ import {useEffect, useState} from 'react';
 function App() {
     const testingAccLog = ['-NdZnfGP2fd89lepPRYv', '-NdZntH7MHYVl4A8PBNZ', '-NdZoSYdEn12zlF5i071'];
     const [appScreen, setAppScreen] = useState('logged');
-    const [gameID, setGameID] = useState(testingAccLog[0]);
+    const [gameID, setGameID] = useState(testingAccLog[2]);
 
     // --------------------------- HANDLERS --------------------------- //
 
