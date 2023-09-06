@@ -3,7 +3,11 @@ import {useState} from 'react';
 import ScoreTracker from './TabsContents/ScoreTracker.js';
 
 export default function TabContent(props) {
-    const [tab, setTab] = useState('Score Tracker');
+    /* 
+        ! Uncomment to build other tabs
+        ! Uncomment to build other tabs
+        
+        const [tab, setTab] = useState('Score Tracker');
 
     let tabScreenEl;
 
@@ -21,12 +25,13 @@ export default function TabContent(props) {
 
         default:
             break;
-    }
+    } */
 
     return (
         <div className={classes['tab-content-container']}>
             {/*  */}
-            {tabScreenEl}
+            {/* {tabScreenEl} */}
+            <ScoreTracker gameID={props.gameID} />
         </div>
     );
 }

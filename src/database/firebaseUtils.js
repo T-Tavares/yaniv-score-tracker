@@ -1,5 +1,5 @@
 import firebaseApp from './firebaseConfig.js';
-import {getDatabase, ref, onValue, get, push, child, set} from 'firebase/database';
+import {getDatabase, ref, onValue, get, push, set, off} from 'firebase/database';
 
 const db = getDatabase(firebaseApp);
 const dbRef = ref(db, 'games/');
@@ -53,15 +53,31 @@ export async function _authGame(inputGameName, inputPassword) {
 
 // -------------------- RETRIEVE LOGGED GAMNE --------------------- //
 
-export async function _retrieveLoggedGame(id) {
+export function _fetchLoggedGameData(id) {
     if (!id) {
         console.log('No Game ID Found');
         return;
     }
 
+    const dbGameRef = ref(db, `games/${id}`);
+
     return new Promise((resolve, reject) => {
-        const dbGameRef = ref(db, `games/${id}`);
-        onValue(dbGameRef, snapshot => resolve(snapshot.val()));
+        const callback = snapshot => {
+            const data = snapshot.val();
+            if (data !== null) {
+                resolve(data);
+            } else {
+                reject(new Error('Game data not found'));
+            }
+        };
+        const errorCallback = error => {
+            console.error('Error on fetching data', error);
+            reject(error);
+        };
+
+        onValue(dbGameRef, callback, errorCallback);
+
+        return () => off(dbGameRef, callback, errorCallback);
     });
 }
 

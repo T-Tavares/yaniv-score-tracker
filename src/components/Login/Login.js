@@ -10,13 +10,23 @@ export default function Login(props) {
 
     const formHandler = async e => {
         e.preventDefault();
+        console.log('login pressed');
+        const form = e.target.closest('form');
 
-        const inputGameName = e.target.querySelector('[data-identifier="game-name"]').value;
-        const inputPassword = e.target.querySelector('[data-identifier="password"]').value;
+        const inputGameName = form.querySelector('[data-identifier="game-name"]').value;
+        const inputPassword = form.querySelector('[data-identifier="password"]').value;
 
-        const isAuthenticated = await _authGame(inputGameName, inputPassword);
+        const isAuthenticated = new Promise((resolve, reject) => {
+            try {
+                const isAuthenticated = _authGame(inputGameName, inputPassword);
+                resolve(isAuthenticated);
+            } catch (err) {
+                console.error('There was an issue on the Login', err);
+                reject(err);
+            }
+        });
 
-        if (isAuthenticated) loginHandler(isAuthenticated);
+        if (await isAuthenticated) loginHandler(await isAuthenticated);
 
         // TODO ADD ERROR HANDLING AND USER FEEDBACK SCREEN
     };
@@ -24,11 +34,11 @@ export default function Login(props) {
     return (
         <div className={classes.login}>
             <Button text="New Game" callback={newGameHandler} />
-            <form onSubmit={formHandler} className={classes['login-form']}>
+            <form className={classes['login-form']}>
                 <label>Or if you have a ongoing game.</label>
                 <Input dataset={'game-name'} placeholder="Game Name"></Input>
                 <Input dataset={'password'} placeholder="Password"></Input>
-                <Button text="Login" />
+                <Button callback={formHandler} text="Login" />
             </form>
         </div>
     );

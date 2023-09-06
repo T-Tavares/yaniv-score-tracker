@@ -7,8 +7,8 @@ import Game from './components/Game/Game.js';
 import {useEffect, useState} from 'react';
 
 function App() {
-    const [appScreen, setAppScreen] = useState('');
-    const [gameID, setGameID] = useState('');
+    const [appScreen, setAppScreen] = useState('logged');
+    const [gameID, setGameID] = useState('-NdZoSYdEn12zlF5i071');
 
     // --------------------------- HANDLERS --------------------------- //
 

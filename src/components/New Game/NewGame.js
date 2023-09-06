@@ -4,21 +4,21 @@ import Input from '../UI/Input.js';
 import PlayersInput from './PlayersInput.js';
 import {_addNewGameDB} from '../../database/firebaseUtils.js';
 
-export default function NewGame({loginHandler}) {
+export default function NewGame(props) {
     const newGameHandler = e => {
         e.preventDefault();
         const inputs = [...e.target.querySelectorAll('input')];
 
         // Creating New Game Obj
 
-        // Obj INIT()
+        // Game Obj INIT()
         const newGameObj = {
             gameName: '',
             gamePassword: '',
             players: [],
             gamesPlayed: [],
         };
-
+        // Feeding Game Obj
         inputs.forEach((input, index) => {
             if (index === 0) newGameObj.gameName = input.value;
             if (index === inputs.length - 1) newGameObj.gamePassword = input.value;
@@ -29,17 +29,15 @@ export default function NewGame({loginHandler}) {
                 });
         });
 
-        const logNewGame = async () => {
-            new Promise(async (resolve, reject) => {
-                try {
-                    const gameID = await _addNewGameDB(newGameObj, newGameObj.gameName);
-                    loginHandler(gameID);
-                } catch (err) {
-                    console.error('Error loggin the New Game', err);
-                }
-            });
-        };
-        logNewGame();
+        // Logging in on the New Game
+        new Promise(async (res, rej) => {
+            try {
+                const ID = await _addNewGameDB(newGameObj, newGameObj.gameName);
+                res(props.loginHandler(ID));
+            } catch (err) {
+                console.error("Ther's an issue on the login", err);
+            }
+        });
     };
 
     return (

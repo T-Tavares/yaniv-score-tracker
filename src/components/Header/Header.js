@@ -13,24 +13,21 @@ export default function Header(props) {
 
     // Logs out and return header to normal state
     const logoutHandler = () => {
-        setIsMenu(false);
-        props.logoutHandler();
+        window.location.reload();
     };
 
-    // set Menu or Title for header component
-    const titleMenuEl = isMenu ? (
+    const menu = (
         <div className={classes.menu}>
-            <Button text="Edit" />
+            {/* <Button text="Edit" /> */}
             <Button callback={logoutHandler} text="Logout" />
         </div>
-    ) : (
-        <h1>Yaniv Score Tracker</h1>
     );
+    const title = <h1>Yaniv Score Tracker</h1>;
 
     return (
         <header className={classes.header}>
-            <img onClick={isMenuHandler} src={joker} alt="Joker Image" />
-            {titleMenuEl}
+            <img onClick={isMenuHandler} src={joker} alt="Joker" />
+            {isMenu ? menu : title}
         </header>
     );
 }
