@@ -2,13 +2,15 @@ import classes from './App.module.scss';
 import Header from './components/Header/Header.js';
 import Login from './components/Login/Login.js';
 import NewGame from './components/New Game/NewGame.js';
-import Game from './components/Game/Game.js';
+import Logged from './components/Logged/Logged.js';
+// import Game from './components/Game/Game.js';
 
 import {useEffect, useState} from 'react';
 
 function App() {
+    const testingAccLog = ['-NdZnfGP2fd89lepPRYv', '-NdZntH7MHYVl4A8PBNZ', '-NdZoSYdEn12zlF5i071'];
     const [appScreen, setAppScreen] = useState('logged');
-    const [gameID, setGameID] = useState('-NdZoSYdEn12zlF5i071');
+    const [gameID, setGameID] = useState(testingAccLog[0]);
 
     // --------------------------- HANDLERS --------------------------- //
 
@@ -30,7 +32,7 @@ function App() {
             case 'new game':
                 return <NewGame loginHandler={loginHandler} />;
             case 'logged':
-                return <Game gameID={gameID} />;
+                return <Logged gameID={gameID} />;
             default:
                 return <Login newGameHandler={newGameHandler} loginHandler={loginHandler} />;
         }
