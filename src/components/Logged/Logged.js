@@ -1,25 +1,34 @@
-import React from 'react';
+import React, {useState} from 'react';
 import classes from './Logged.module.scss';
 
-import Score from './Tabs/Score.js';
+import Score from './Tabs/Score/Score.js';
+import Stats from './Tabs/Stats.js';
 
 export default function Logged(props) {
+    const [activeTab, setActiveTab] = useState('score');
+
+    const scoreTabHandler = () => setActiveTab('score');
+    const statsTabHandler = () => setActiveTab('stats');
+    const logoutHandler = () => props.logoutHandler();
+
+    function tabHandler() {}
     return (
         <React.Fragment>
             <div className={classes.tabs}>
                 <ul>
                     <li>
-                        <button>Score</button>
+                        <button onClick={scoreTabHandler}>Score</button>
                     </li>
                     <li>
-                        <button>Stats</button>
+                        <button onClick={statsTabHandler}>Stats</button>
                     </li>
                     <li>
-                        <button>Logout</button>
+                        <button onClick={logoutHandler}>Logout</button>
                     </li>
                 </ul>
             </div>
-            <Score gameID={props.gameID} />
+            {activeTab === 'score' && <Score gameID={props.gameID} />}
+            {activeTab === 'stats' && <Stats gameID={props.gameID} />}
         </React.Fragment>
     );
 }

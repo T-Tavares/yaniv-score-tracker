@@ -3,14 +3,15 @@ import Header from './components/Header/Header.js';
 import Login from './components/Login/Login.js';
 import NewGame from './components/New Game/NewGame.js';
 import Logged from './components/Logged/Logged.js';
-// import Game from './components/Game/Game.js';
 
-import {useEffect, useState} from 'react';
+import ModalBox from './components/UI/ModalBox.js';
+
+import {useState} from 'react';
 
 function App() {
-    const testingAccLog = ['-NdZnfGP2fd89lepPRYv', '-NdZntH7MHYVl4A8PBNZ', '-NdZoSYdEn12zlF5i071'];
-    const [appScreen, setAppScreen] = useState('logged');
-    const [gameID, setGameID] = useState(testingAccLog[2]);
+    // const testingAccLog = ['-NdZnfGP2fd89lepPRYv', '-NdZntH7MHYVl4A8PBNZ', '-NdZoSYdEn12zlF5i071'];
+    const [appScreen, setAppScreen] = useState('');
+    const [gameID, setGameID] = useState('');
 
     // --------------------------- HANDLERS --------------------------- //
 
@@ -30,9 +31,9 @@ function App() {
     function AppScreenEl() {
         switch (appScreen) {
             case 'new game':
-                return <NewGame loginHandler={loginHandler} />;
+                return <NewGame loginHandler={loginHandler} logoutHandler={logoutHandler} />;
             case 'logged':
-                return <Logged gameID={gameID} />;
+                return <Logged gameID={gameID} logoutHandler={logoutHandler} />;
             default:
                 return <Login newGameHandler={newGameHandler} loginHandler={loginHandler} />;
         }
@@ -42,6 +43,7 @@ function App() {
 
     return (
         <div className={classes.app}>
+            <ModalBox />
             <Header logoutHandler={logoutHandler} />
             <AppScreenEl />
         </div>

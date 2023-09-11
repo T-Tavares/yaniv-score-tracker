@@ -1,5 +1,5 @@
+import React from 'react';
 import classes from './Login.module.scss';
-
 import {_authGame} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
@@ -10,7 +10,6 @@ export default function Login(props) {
 
     const formHandler = async e => {
         e.preventDefault();
-        console.log('login pressed');
         const form = e.target.closest('form');
 
         const inputGameName = form.querySelector('[data-identifier="game-name"]').value;
@@ -32,14 +31,16 @@ export default function Login(props) {
     };
 
     return (
-        <div className={classes.login}>
-            <Button text="New Game" callback={newGameHandler} />
-            <form className={classes['login-form']}>
-                <label>Or if you have a ongoing game.</label>
-                <Input dataset={'game-name'} placeholder="Game Name"></Input>
-                <Input dataset={'password'} placeholder="Password"></Input>
-                <Button callback={formHandler} text="Login" />
-            </form>
-        </div>
+        <React.Fragment>
+            <div className={classes.login}>
+                <Button text="New Game" callback={newGameHandler} />
+                <form className={classes['login-form']}>
+                    <label>Or if you have a ongoing game.</label>
+                    <Input dataset={'game-name'} placeholder="Game Name"></Input>
+                    <Input dataset={'password'} placeholder="Password"></Input>
+                    <Button callback={formHandler} text="Login" />
+                </form>
+            </div>
+        </React.Fragment>
     );
 }

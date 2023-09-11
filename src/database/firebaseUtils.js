@@ -55,7 +55,7 @@ export async function _authGame(inputGameName, inputPassword) {
 
 export function _fetchLoggedGameData(id) {
     if (!id) {
-        console.log('No Game ID Found');
+        console.error('No Game ID Found');
         return;
     }
 
@@ -87,13 +87,32 @@ export async function _updateScoreDB(id, scoreArr) {
     const dbGameRef = ref(db, `games/${id}/players`);
     const playersNum = (await get(dbGameRef)).val().length - 1;
 
-    let scoreDataArr = [];
+    const scoreDataArr = []; // to hold the formated score array to be pushed to the DB
+    const reduceWinnerIndex = []; // to catch the index of any player that got deduced points
 
     // duplicate old score and add new score
     for (let n = 0; n <= playersNum; n++) {
         const oldScoreData = (await get(ref(db, `games/${id}/players/${n}/points`))).val();
+        const lastScore = +oldScoreData.slice(-1);
+
+        let currentScore = lastScore + scoreArr[n];
+
+        // Yaniv Reduce points rules
+        // number is below 100 / last score is multiple of 50 ( to not reduce again) / current score it multiple of 50
+        if (currentScore <= 100 && lastScore % 50 !== 0 && lastScore % 50 !== 0 && currentScore % 50 === 0) {
+            currentScore = currentScore - 50;
+            reduceWinnerIndex.push(n);
+        }
+
+        // number is below 1000 / last score is multiple of 500 ( to not reduce again) / current score it multiple of 500
+        if (currentScore >= 1000 && lastScore % 500 !== 0 && currentScore % 500 === 0) {
+            currentScore = currentScore - 500;
+            reduceWinnerIndex.push(n);
+        }
+
         // add to the last point in the array
-        oldScoreData.push(+oldScoreData.slice(-1) + scoreArr[n]);
+        oldScoreData.push(currentScore);
+
         // push to the updated score array
         scoreDataArr.push(oldScoreData);
     }
@@ -102,4 +121,8 @@ export async function _updateScoreDB(id, scoreArr) {
     for (let n = 0; n <= playersNum; n++) {
         await set(ref(db, `games/${id}/players/${n}/points`), scoreDataArr[n]);
     }
+
+    // Return winners index list or false
+    if (reduceWinnerIndex.length > 0) return reduceWinnerIndex;
+    return false;
 }

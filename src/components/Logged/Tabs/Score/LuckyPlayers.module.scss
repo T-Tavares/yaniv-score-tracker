@@ -1,0 +1,53 @@
+@import '../../../UI/colours.module';
+.glass {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    left: 0;
+    top: 0;
+    z-index: 10;
+
+    background-color: rgb(161, 161, 161, 0.5);
+    backdrop-filter: blur(2px);
+}
+.lucky-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    width: 70vw;
+    height: 70vh;
+
+    border-radius: 1rem;
+    background: linear-gradient(-45deg, #333, #000);
+    border: 5px solid $header-text;
+
+    padding: 5vh 5vw;
+
+    text-align: center;
+
+    h2,
+    h4 {
+        font-weight: 200;
+    }
+
+    .joker {
+        width: 18vw;
+        &:nth-of-type(2) {
+            margin-left: auto;
+        }
+    }
+
+    z-index: 1;
+}
+
+.note {
+    font-size: 1.2rem;
+    align-self: self-end;
+    margin: 1.5rem auto 0 auto;
+    text-shadow: 3px 3px 3px #262626;
+}

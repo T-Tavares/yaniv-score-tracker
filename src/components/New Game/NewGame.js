@@ -1,3 +1,4 @@
+import React from 'react';
 import classes from './NewGame.module.scss';
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
@@ -41,12 +42,17 @@ export default function NewGame(props) {
     };
 
     return (
-        <form onSubmit={newGameHandler} className={classes['new-game-form']}>
-            <Input data-game-title="gameTitle" label="Game Name" placeholder="Chose your Game Name" />
-            <PlayersInput />
-            <Input data-game-title="gamePassword" label="Password" placeholder="Chose your Game Password" />
+        <React.Fragment>
+            <form onSubmit={newGameHandler} className={classes['new-game-form']}>
+                <Input data-game-title="gameTitle" label="Game Name" placeholder="Chose your Game Name" />
+                <PlayersInput />
+                <Input data-game-title="gamePassword" label="Password" placeholder="Chose your Game Password" />
 
-            <Button text="Create New Game" />
-        </form>
+                <Button text="Create New Game" />
+            </form>
+            <div className={classes.back}>
+                <Button callback={props.logoutHandler} text="Cancel" />
+            </div>
+        </React.Fragment>
     );
 }
