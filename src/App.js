@@ -4,8 +4,7 @@ import Login from './components/Login/Login.js';
 import NewGame from './components/New Game/NewGame.js';
 import Logged from './components/Logged/Logged.js';
 
-import ModalBox from './components/UI/ModalBox.js';
-
+import {ModalBoxProvider} from './components/UI/ModalBox/useModalBox.js';
 import {useState} from 'react';
 
 function App() {
@@ -42,11 +41,13 @@ function App() {
     // --------------------- APP COMPONENT OUTPUT --------------------- //
 
     return (
-        <div className={classes.app}>
-            <ModalBox />
-            <Header logoutHandler={logoutHandler} />
-            <AppScreenEl />
-        </div>
+        <ModalBoxProvider>
+            <div className={classes.app}>
+                {/* <ModalBox /> */}
+                <Header logoutHandler={logoutHandler} />
+                <AppScreenEl />
+            </div>
+        </ModalBoxProvider>
     );
 }
 

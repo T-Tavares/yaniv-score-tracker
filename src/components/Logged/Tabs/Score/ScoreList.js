@@ -2,17 +2,21 @@ import classes from './ScoreList.module.scss';
 import Input from '../../../UI/Input.js';
 
 export default function ScoreList(props) {
-    let last, secondLast, thirdLast;
-    const scoreDataArrays = [];
-    const scoreDataPlayers = [];
+    let last, secondLast, thirdLast; // logic to render initial scores properly
+    const scoreDataArrays = []; // Array of scores on order
+    const scoreDataPlayers = []; // Array of players on order
 
-    // Build working arrays
+    // --------------- BUILD PLAYERS AND SCORES ARRAYS ---------------- //
     props.scoreData.forEach((player, index) => {
         scoreDataPlayers.push(player.playerName);
         scoreDataArrays.push(player.points);
     });
 
-    // Build winner indexes array
+    // ---------- GET WINNERS INDEXES ARRAY (LOWEST POINTS) ----------- //
+    /* 
+        These indexes will be used to highlight the winner/winners names
+        on the component render.
+    */
     const {winnerIndexArray} = scoreDataArrays.reduce(
         (indexesObj, currScoreArray, currIndex) => {
             const currScore = +currScoreArray.slice(-1);
@@ -29,23 +33,29 @@ export default function ScoreList(props) {
         {winnerIndexArray: [], smallestScore: 0}
     );
 
-    // Building table with Players and Scores
-    return scoreDataArrays.map((score, index) => {
-        // is This player the winner check
-        const winner = winnerIndexArray.includes(index);
+    // ------------- BUILD TABLE WITH PLAYERS AND SCORES -------------- //
+    // ---------------------- THREE LAST SCORES ----------------------- //
 
-        // starting game logic (no points yet)
+    return scoreDataArrays.map((score, index) => {
+        const winner = winnerIndexArray.includes(index); // Check for winning player
+
+        // ------------- STARTING GAME LOGIC (NO POINTS YET) -------------- //
+
         if (score.length === 1) {
             [last] = score;
         }
         if (score.length === 2) {
             [secondLast, last] = score.slice(-2);
         }
-        // after 3 points goes back to normal
+        // --------- // AFTER 3 POINTS LOGIC GOES BACK TO DEFAULT --------- //
+
         if (score.length >= 3) {
             [thirdLast, secondLast, last] = score.slice(-3);
         }
 
+        // ---------------------------------------------------------------- //
+        // -------------------- ScoreList.js COMPONENT -------------------- //
+        // ---------------------------------------------------------------- //
         return (
             <tr className={winner ? classes.winning : ''} key={scoreDataPlayers[index] + '_key'}>
                 <th>{scoreDataPlayers[index]}</th>

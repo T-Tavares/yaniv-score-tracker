@@ -4,34 +4,49 @@ import {_authGame} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
+import ModalBox from '../UI/ModalBox/ModalBox.js';
+import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
 
 export default function Login(props) {
     const {newGameHandler, loginHandler} = props;
+    const {modal, setModal} = useModalBox();
 
+    // ---------------------------------------------------------------- //
+    // ---------------------- LOGIN FORM HANDLER ---------------------- //
+    // ---------------------------------------------------------------- //
     const formHandler = async e => {
         e.preventDefault();
-        const form = e.target.closest('form');
 
+        // ----------- GET USER INPUTS OF GAMENAME AND PASSWORD ----------- //
+        const form = e.target.closest('form');
         const inputGameName = form.querySelector('[data-identifier="game-name"]').value;
         const inputPassword = form.querySelector('[data-identifier="password"]').value;
 
+        // ------- CHECK IF USER AND PASSWORD ARE VALID ON DATABASE ------- //
         const isAuthenticated = new Promise((resolve, reject) => {
             try {
                 const isAuthenticated = _authGame(inputGameName, inputPassword);
                 resolve(isAuthenticated);
             } catch (err) {
-                console.error('There was an issue on the Login', err);
-                reject(err);
+                // catch any DB error
+                reject(new Error("There's a problem on the authentication, please contact our support team.", err));
             }
         });
 
-        if (await isAuthenticated) loginHandler(await isAuthenticated);
+        // -------- IF USER AND PASSWORD ARE VALID, LOGIN TO GAME --------- //
+        if (await isAuthenticated) return loginHandler(await isAuthenticated);
 
-        // TODO ADD ERROR HANDLING AND USER FEEDBACK SCREEN
+        // ------ RENDER MODAL IF USER / PASSWORD IS NOT FOUND ON DB ------ //
+        setModal({...modalObjInit, ...modalMsg.userNotFound});
     };
+
+    // ---------------------------------------------------------------- //
+    // ---------------------- Login.js COMPONENT ---------------------- //
+    // ---------------------------------------------------------------- //
 
     return (
         <React.Fragment>
+            {modal.state && <ModalBox />}
             <div className={classes.login}>
                 <Button text="New Game" callback={newGameHandler} />
                 <form className={classes['login-form']}>

@@ -2,77 +2,106 @@ import React, {useEffect, useState} from 'react';
 import classes from './Score.module.scss';
 import {_fetchLoggedGameData, _updateScoreDB} from '../../../../database/firebaseUtils.js';
 import ScoreList from './ScoreList.js';
-import LuckyPlayers from './LuckyPlayers.js';
+import ModalBox from '../../../UI/ModalBox/ModalBox.js';
+import {useModalBox, modalObjInit, modalMsg} from '../../../UI/ModalBox/useModalBox.js';
 
 export default function Score(props) {
     const [scoreData, setScoreData] = useState([]);
-    const [luckyPlayers, setLuckyPlayers] = useState('');
+    const {modal, setModal} = useModalBox();
 
-    // Fech Data Handler - Fetch and set State
+    // ---------------------------------------------------------------- //
+    // ---------------------- HANDLER FUNCTIONS ----------------------- //
+    // ---------------------------------------------------------------- //
+
+    // ---------------------- HANDLER FUNCTIONS ----------------------- //
+    // ---------------------- FETCH DATA FROM DB ---------------------- //
+
     async function fetchDataHandler() {
         const data = await _fetchLoggedGameData(props.gameID);
         setScoreData(data.players);
     }
 
-    // Add Score to DB Handler
+    // ---------------------- HANDLER FUNCTIONS ----------------------- //
+    // ----- ADD SCORE TO DB HANDLER AND CHECK FOR LUCKY PLAYERS ------ //
+
     async function addToScoreHandler(e) {
         e.preventDefault();
 
-        // Get inputs elements
+        // ----------------------- GET USER INPUTS  ----------------------- //
         const inputsArrEls = [...e.target.querySelectorAll('input')];
-
-        // Get inputs Values
         const inputedScoreArr = inputsArrEls.map(inp => +inp.value);
 
-        // Update DB and Rerender Score
+        // --------------- CHECK IF ALL INPUTS ARE NUMBERS ---------------- //
+        const areInputsNum = inputedScoreArr.every(input => typeof input === 'number' && input >= 0);
+        if (!areInputsNum) setModal({...modalObjInit, ...modalMsg.wrongInputs});
+
+        // ----------------------- UPDATE DATABASE ------------------------ //
+        /* 
+        
+            _updateScoreDB method will return an array of players if any player
+            reach a multiple of 50 / 500 score and gets points deduced.
+
+            If not it'll return 'false'.
+
+            This will be later used to render lucky players names on a modal.
+
+        */
         const luckyPlayersIndexArr = await _updateScoreDB(props.gameID, inputedScoreArr);
 
+        // ---------------------- RERENDER NEW SCORE ---------------------- //
         await fetchDataHandler();
 
-        // If any lucky player ( reduced points) render celebration
+        // -------- IF ANY LUCKY PLAYERS, RENDER CELEBRATION MODAL -------- //
+        /* 
+
+            lucky players handler will only render the modal if the luckyPlayersIndexArr is an array
+        
+        */
         luckyPlayersHandler(luckyPlayersIndexArr);
 
-        // Clear Inputs
+        // ------------------------- CLEAR INPUTS ------------------------- //
         inputsArrEls.forEach(inp => (inp.value = ''));
     }
+
+    // ---------------------- HANDLER FUNCTIONS ----------------------- //
+    // -------------------- LUCKY PLAYERS HANDLER --------------------- //
 
     async function luckyPlayersHandler(luckyPlayersIndexArr) {
         if (!luckyPlayersIndexArr) return; // return if no lucky player
 
-        // fetch data from DB
+        // ---------------------- FETCH DATA FROM DB ---------------------- //
         const data = await _fetchLoggedGameData(props.gameID);
         const playersData = data.players;
 
-        // get winners names on array
+        // ------------- GET LUCKY PLAYERS NAMES ON AN ARRAY -------------- //
         const luckyPlayers = playersData.reduce((players, currPlayer, index) => {
             if (luckyPlayersIndexArr.includes(index)) players.push(currPlayer.playerName);
             return players;
         }, []);
 
-        setLuckyPlayers(luckyPlayers);
-
-        /*       
-        time out for the luckyPlayer card
-        // ! CLEAR SETTIMEOUT
-        // TODO CLEAR SETTIMEOUT
-        // ! CLEAR SETTIMEOUT
-
-        setTimeout(() => {
-            setLuckyPlayers('');
-        }, 5000); */
+        // -------------- SET AND RENDER LUCKY PLAYERS MODAL -------------- //
+        /*  Because the message will always change  */
+        const luckyPlayersString = `\n\n\n${luckyPlayers.join('\n')}`;
+        setModal({
+            ...modalObjInit,
+            ...modalMsg.luckyPlayers,
+            type: 'msg', // set type of modal to msg
+            msg: modalMsg.luckyPlayers.msg + luckyPlayersString, // add lucky players to celebration msg
+        });
     }
 
-    const luckyPlayersCloseHandler = () => setLuckyPlayers('');
-
+    // ---- useEffect() TO PREVENT INFINITY LOOP ON DB FETCH/RENDER ----- //
     useEffect(() => {
         fetchDataHandler();
     }, []);
 
+    // ---------------------------------------------------------------- //
+    // ---------------------- Score.js COMPONENT ---------------------- //
+    // ---------------------------------------------------------------- //
+
     return (
         <React.Fragment>
-            {luckyPlayers && (
-                <LuckyPlayers luckyPlayers={luckyPlayers} luckyPlayersCloseHandler={luckyPlayersCloseHandler} />
-            )}
+            {modal.state && <ModalBox />}
             <form onSubmit={addToScoreHandler}>
                 <table className={classes[`score-table`]}>
                     <thead>
