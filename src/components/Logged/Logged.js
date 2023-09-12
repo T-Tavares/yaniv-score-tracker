@@ -11,7 +11,6 @@ export default function Logged(props) {
     const statsTabHandler = () => setActiveTab('stats');
     const logoutHandler = () => props.logoutHandler();
 
-    function tabHandler() {}
     return (
         <React.Fragment>
             <div className={classes.tabs}>

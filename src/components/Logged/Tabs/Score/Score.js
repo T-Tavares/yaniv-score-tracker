@@ -93,6 +93,7 @@ export default function Score(props) {
     // ---- useEffect() TO PREVENT INFINITY LOOP ON DB FETCH/RENDER ----- //
     useEffect(() => {
         fetchDataHandler();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // ---------------------------------------------------------------- //

@@ -9,6 +9,7 @@
 
     h1 {
         color: $header-text;
+        font-size: 8vw;
     }
 
     img {
@@ -22,6 +23,7 @@
     width: 100%;
     display: flex;
     justify-content: space-around;
+    text-align: center;
 
     button {
         padding: 0.8rem;

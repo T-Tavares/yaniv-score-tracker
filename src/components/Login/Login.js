@@ -55,6 +55,9 @@ export default function Login(props) {
                     <Input dataset={'password'} placeholder="Password"></Input>
                     <Button callback={formHandler} text="Login" />
                 </form>
+                <a href="https://www.freepik.com/icon/joker_594660" target="_blank" rel="noreferrer">
+                    Joker Icon by Freepik
+                </a>
             </div>
         </React.Fragment>
     );
