@@ -48,7 +48,7 @@ export default function Login(props) {
         <React.Fragment>
             {modal.state && <ModalBox />}
             <div className={classes.login}>
-                <Button text="New Game" callback={newGameHandler} />
+                <Button className={classes['new-game-btn']} text="New Game" callback={newGameHandler} />
                 <form className={classes['login-form']}>
                     <label>Or if you have a ongoing game.</label>
                     <Input dataset={'game-name'} placeholder="Game Name"></Input>

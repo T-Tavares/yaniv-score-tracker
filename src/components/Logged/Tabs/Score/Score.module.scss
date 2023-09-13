@@ -1,26 +1,25 @@
 @import '../../../UI/colours.module.scss';
 
 .score-table {
-    color: #ccc;
+    color: $list-font-colour;
     width: 82vw; // to match the padding
 
-    border-radius: 0.3rem;
+    border-radius: 0 0 0.3rem 0.3rem;
     border-collapse: collapse;
     overflow: hidden;
 
     // ROWS
     tr {
         // Odds and Even BG Color Swap
-        background-color: #2c2c2c;
+        background-color: $list-light-bg-row;
         &:nth-of-type(odd) {
-            background-color: #555;
+            background-color: $list-dark-bg-row;
         }
         // Header BG
         &.table-header {
-            background-color: #111;
-            // button {
-            //     margin: 0 0 0 68vw;
-            // }
+            background-color: $list-white-bg;
+            color: $primary-btn;
+            font-size: 0.9rem;
         }
     }
 
@@ -56,7 +55,7 @@
 
         text-align: center;
         font-size: 1.2rem;
-        color: #fff;
+        color: $text-font-colour;
         background-color: $primary-btn;
         border-radius: 0.2rem;
         border: 1px solid $primary-btn-light;

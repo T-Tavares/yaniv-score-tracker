@@ -2,7 +2,7 @@
     display: grid;
     flex-direction: column;
     height: 98vh;
-    grid-template-rows: 1fr 2fr;
+    grid-template-rows: min(35vw, 350px) 2fr;
     grid-template-areas:
         'header'
         'app';

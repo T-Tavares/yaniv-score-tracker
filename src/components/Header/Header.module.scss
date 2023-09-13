@@ -4,21 +4,21 @@
     grid-area: header;
 
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 2rem;
 
     h1 {
-        color: $header-text;
-        font-size: 8vw;
+        color: $header-title-font-colour;
+        font-size: clamp(2rem, 8vw, 8.2rem);
     }
 
     img {
-        width: 30vw;
+        width: clamp(120px, 30vw, 300px);
     }
 }
 
 .menu {
-    color: $text;
+    color: $text-font-colour;
     list-style: none;
     width: 100%;
     display: flex;

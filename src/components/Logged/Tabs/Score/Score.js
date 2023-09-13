@@ -33,7 +33,8 @@ export default function Score(props) {
 
         // --------------- CHECK IF ALL INPUTS ARE NUMBERS ---------------- //
         const areInputsNum = inputedScoreArr.every(input => typeof input === 'number' && input >= 0);
-        if (!areInputsNum) setModal({...modalObjInit, ...modalMsg.wrongInputs});
+        const areInputsEmpty = inputedScoreArr.every(input => input === 0);
+        if (!areInputsNum || areInputsEmpty) return setModal({...modalObjInit, ...modalMsg.wrongInputs});
 
         // ----------------------- UPDATE DATABASE ------------------------ //
         /* 

@@ -1,6 +1,30 @@
-$text: #fff;
+// GENERAL COLOUR SCHEME
+
+$text-font-colour: #fff;
 $bg: #222;
 $bg-light: #333;
 $primary-btn: #9c3b3b;
 $primary-btn-light: #9f5b5b;
-$header-text: #d9b871;
+
+//  HEADER COLOUR SCHEME
+
+$header-title-font-colour: #d9b871;
+
+//  SCORE LIST COLOUR SCHEME
+
+$list-font-colour: #eee;
+$list-white-bg: #e1e1e1;
+$list-winner-font-color: #f8b600;
+
+$list-dark-bg-row: #6d2929;
+$list-light-bg-row: #985e5e;
+
+// MODAL BOX COLOUR SCHEME
+
+$modal-box-border-colour: #d9b871;
+
+$modal-box-gradient-error: linear-gradient(135deg, #220000, #7a0000);
+$modal-box-gradient-warning: linear-gradient(135deg, #5e2d00, #7a6600);
+$modal-box-gradient-msg: linear-gradient(135deg, #000000, #3d3d3d);
+
+$modal-box-backdrop-bg: rgba(0, 0, 0, 0.8);

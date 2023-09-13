@@ -1,5 +1,7 @@
+@import '../../../UI/colours.module.scss';
+
 .winning {
-    color: #00e859e2;
+    color: $list-winner-font-color;
     font-variant: small-caps;
     // background-color: #242921 !important;
 }

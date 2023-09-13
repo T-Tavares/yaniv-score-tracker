@@ -13,21 +13,23 @@ export default function Logged(props) {
 
     return (
         <React.Fragment>
-            <div className={classes.tabs}>
-                <ul>
-                    <li>
-                        <button onClick={scoreTabHandler}>Score</button>
-                    </li>
-                    <li>
-                        <button onClick={statsTabHandler}>Stats</button>
-                    </li>
-                    <li>
-                        <button onClick={logoutHandler}>Logout</button>
-                    </li>
-                </ul>
+            <div>
+                <div className={classes.tabs}>
+                    <ul>
+                        <li className={activeTab === 'score' ? classes.active : ''}>
+                            <button onClick={scoreTabHandler}>Score</button>
+                        </li>
+                        <li className={activeTab === 'stats' ? classes.active : ''}>
+                            <button onClick={statsTabHandler}>Stats</button>
+                        </li>
+                        <li>
+                            <button onClick={logoutHandler}>Logout</button>
+                        </li>
+                    </ul>
+                </div>
+                {activeTab === 'score' && <Score gameID={props.gameID} />}
+                {activeTab === 'stats' && <Stats gameID={props.gameID} />}
             </div>
-            {activeTab === 'score' && <Score gameID={props.gameID} />}
-            {activeTab === 'stats' && <Stats gameID={props.gameID} />}
         </React.Fragment>
     );
 }
