@@ -1,5 +1,6 @@
 import firebaseApp from './firebaseConfig.js';
 import {getDatabase, ref, onValue, get, push, set, off} from 'firebase/database';
+import {getTimeStampNow, millisecondsToDecimal, getTimeBetweenTimeStamps} from '../helpers/Helpers.js';
 
 const db = getDatabase(firebaseApp);
 const dbRef = ref(db, 'games/');
@@ -126,3 +127,73 @@ export async function _updateScoreDB(id, scoreArr) {
     if (reduceWinnerIndex.length > 0) return reduceWinnerIndex;
     return false;
 }
+
+// ---------------------------------------------------------------- //
+// ---------------------- SESSIONS FUNCTIONS ---------------------- //
+// ---------------------------------------------------------------- //
+
+export async function _getLastTimeStamp(id) {
+    const dbRefTimeStamp = ref(db, `games/${id}/stats/lastTimeStamp`);
+    const lastTimeStamp = (await get(dbRefTimeStamp)).val();
+    return lastTimeStamp;
+}
+
+export async function _updateLastTimeStamp(id, newTimeStamp) {
+    const dbRefTimeStamp = ref(db, `games/${id}/stats/lastTimeStamp`);
+    try {
+        await set(dbRefTimeStamp, newTimeStamp);
+    } catch (err) {
+        console.error(`There was a problem on fetching the Time Stamp`, err);
+    }
+}
+
+export async function _isSessionNew(id) {
+    /* 
+        A new session is fired after a 30 min of difference from the last score added
+
+        returns true if session is new
+                false if not
+    */
+
+    const lastTimeStamp = _getLastTimeStamp(id);
+    const currTimeStamp = getTimeStampNow();
+    const timeDiff = millisecondsToDecimal(currTimeStamp - lastTimeStamp, 'min');
+
+    if (timeDiff > 30) return true;
+    return false;
+}
+
+export async function _updateCurrSession(id) {
+    // get last timeStamp
+
+    const lastTimeStamp = _getLastTimeStamp(id);
+    const currTimeStamp = getTimeStampNow();
+
+    // get currSession Data
+
+    const dbRefCurrSession = ref(db, `games/${id}/stats/currSession`);
+    const currSessionInitData = (await get(dbRefCurrSession)).val();
+
+    // calculate session time
+    const elapsedTime = getTimeBetweenTimeStamps(await lastTimeStamp, currTimeStamp);
+
+    // build New currSessionData Obj
+    // Session ID remains the same. It's defined by the timeStamp of the time the session was created.
+    const newCurrSessionObj = {
+        rounds: currSessionInitData.rounds + 1,
+        sessionID: currSessionInitData.sessionID,
+        time: currSessionInitData.time + elapsedTime,
+    };
+
+    // Update Database with currSession and lastTimeStamp
+
+    await set(dbRefCurrSession, newCurrSessionObj);
+    await _updateLastTimeStamp(id, currTimeStamp);
+}
+
+// TODO UPDATE TOTAL ROUNDS
+
+// TODO UPDATE TOTAL TIME
+
+// TODO THEN MOVE TO CREATE NEW SESSION AND UPDATE SESSIONS ARRAY
+// TODO  UPDATE TOTAL SESSIONS

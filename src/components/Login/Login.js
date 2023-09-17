@@ -1,6 +1,6 @@
 import React from 'react';
 import classes from './Login.module.scss';
-import {_authGame} from '../../database/firebaseUtils.js';
+import {_authGame, _isSessionNew} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
@@ -34,7 +34,17 @@ export default function Login(props) {
         });
 
         // -------- IF USER AND PASSWORD ARE VALID, LOGIN TO GAME --------- //
-        if (await isAuthenticated) return loginHandler(await isAuthenticated);
+        if (await isAuthenticated) {
+            if (await _isSessionNew(await isAuthenticated)) {
+                console.log('create new session');
+            } else {
+                // Starts count of New Session
+                console.log('add to old session');
+                // TODO CHANGE LAST TIME STAMP
+            }
+
+            return loginHandler(await isAuthenticated);
+        }
 
         // ------ RENDER MODAL IF USER / PASSWORD IS NOT FOUND ON DB ------ //
         setModal({...modalObjInit, ...modalMsg.userNotFound});

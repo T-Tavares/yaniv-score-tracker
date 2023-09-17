@@ -1,6 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import classes from './Score.module.scss';
-import {_fetchLoggedGameData, _updateScoreDB} from '../../../../database/firebaseUtils.js';
+import {
+    _fetchLoggedGameData,
+    _updateScoreDB,
+    _isSessionNew,
+    _updateCurrSession,
+} from '../../../../database/firebaseUtils.js';
 import ScoreList from './ScoreList.js';
 import ModalBox from '../../../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../../../UI/ModalBox/useModalBox.js';
@@ -8,6 +13,8 @@ import {useModalBox, modalObjInit, modalMsg} from '../../../UI/ModalBox/useModal
 export default function Score(props) {
     const [scoreData, setScoreData] = useState([]);
     const {modal, setModal} = useModalBox();
+
+    const gameID = props.gameID;
 
     // ---------------------------------------------------------------- //
     // ---------------------- HANDLER FUNCTIONS ----------------------- //
@@ -17,7 +24,7 @@ export default function Score(props) {
     // ---------------------- FETCH DATA FROM DB ---------------------- //
 
     async function fetchDataHandler() {
-        const data = await _fetchLoggedGameData(props.gameID);
+        const data = await _fetchLoggedGameData(gameID);
         setScoreData(data.players);
     }
 
@@ -28,13 +35,24 @@ export default function Score(props) {
         e.preventDefault();
 
         // ----------------------- GET USER INPUTS  ----------------------- //
+
         const inputsArrEls = [...e.target.querySelectorAll('input')];
         const inputedScoreArr = inputsArrEls.map(inp => +inp.value);
 
         // --------------- CHECK IF ALL INPUTS ARE NUMBERS ---------------- //
+
         const areInputsNum = inputedScoreArr.every(input => typeof input === 'number' && input >= 0);
         const areInputsEmpty = inputedScoreArr.every(input => input === 0);
         if (!areInputsNum || areInputsEmpty) return setModal({...modalObjInit, ...modalMsg.wrongInputs});
+
+        // ----------------------- SESSION HANDLERS ----------------------- //
+
+        if (await _isSessionNew(gameID)) {
+            console.log('create New Session');
+        } else {
+            console.log('add to old session');
+            _updateCurrSession(gameID);
+        }
 
         // ----------------------- UPDATE DATABASE ------------------------ //
         /* 
@@ -47,7 +65,7 @@ export default function Score(props) {
             This will be later used to render lucky players names on a modal.
 
         */
-        const luckyPlayersIndexArr = await _updateScoreDB(props.gameID, inputedScoreArr);
+        const luckyPlayersIndexArr = await _updateScoreDB(gameID, inputedScoreArr);
 
         // ---------------------- RERENDER NEW SCORE ---------------------- //
         await fetchDataHandler();
@@ -71,7 +89,7 @@ export default function Score(props) {
         if (!luckyPlayersIndexArr) return; // return if no lucky player
 
         // ---------------------- FETCH DATA FROM DB ---------------------- //
-        const data = await _fetchLoggedGameData(props.gameID);
+        const data = await _fetchLoggedGameData(gameID);
         const playersData = data.players;
 
         // ------------- GET LUCKY PLAYERS NAMES ON AN ARRAY -------------- //

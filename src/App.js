@@ -8,7 +8,7 @@ import {ModalBoxProvider} from './components/UI/ModalBox/useModalBox.js';
 import {useState} from 'react';
 
 function App() {
-    // const testingAccLog = ['-NdZnfGP2fd89lepPRYv', '-NdZntH7MHYVl4A8PBNZ', '-NdZoSYdEn12zlF5i071'];
+    // const testingAccLog = '-NeBlSSK-DHGAshijTjD';
     const [appScreen, setAppScreen] = useState('');
     const [gameID, setGameID] = useState('');
 

@@ -1,5 +1,9 @@
 import React from 'react';
+
 import classes from './NewGame.module.scss';
+
+import {getTimeStampNow} from '../../helpers/Helpers.js';
+
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
 import PlayersInput from './PlayersInput.js';
@@ -19,11 +23,26 @@ export default function NewGame(props) {
 
         // --------------------- CREATING GAME OBJECT --------------------- //
         // ---------------------- GAME OBJECT INIT() ---------------------- //
+
         const newGameObj = {
             gameName: '',
             gamePassword: '',
+            stats: {
+                lastTimeStamp: Number,
+
+                totalRounds: 0,
+                totalSessions: 0,
+                totalTime: 0,
+
+                currSession: {
+                    sessionID: Number,
+                    time: 0,
+                    rounds: 0,
+                },
+
+                sessions: [],
+            },
             players: [],
-            gamesPlayed: [],
         };
 
         // ------------- FEEDING GAME OBJECT WITH USER INPUTS ------------- //
@@ -43,6 +62,12 @@ export default function NewGame(props) {
                 });
             }
         });
+
+        // ------------- FEEDING GAME OBJECT WITH TIME STAMPS ------------- //
+        // ------------------------- STATS INIT() ------------------------- //
+
+        // Add TimeStamp to NewGame -  CurrSession && lastTimeStamp
+        newGameObj.stats.currSession.sessionID = newGameObj.stats.lastTimeStamp = getTimeStampNow();
 
         // ---------------------------------------------------------------- //
         // ---------------- CHECKING FOR USERS BAD INPUTS ----------------- //
@@ -71,9 +96,10 @@ export default function NewGame(props) {
                 const ID = await _addNewGameDB(newGameObj, newGameObj.gameName);
 
                 // ---------------------- LOGIN TO NEW GAME ----------------------- //
+
                 res(props.loginHandler(ID));
             } catch (err) {
-                console.error("Ther's an issue on the login", err);
+                console.error("Ther's an issue on the New game login", err);
             }
         });
     };
