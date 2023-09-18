@@ -35,12 +35,14 @@ export default function Login(props) {
 
         // -------- IF USER AND PASSWORD ARE VALID, LOGIN TO GAME --------- //
         if (await isAuthenticated) {
+            // TODO FIGURE A WAY TO RULE OUT LOGINS TO CHECK THE GAME ( NO SCORE ADDED )
+
             if (await _isSessionNew(await isAuthenticated)) {
+                // UPDATE LAST TIME STAMP
                 console.log('create new session');
             } else {
                 // Starts count of New Session
                 console.log('add to old session');
-                // TODO CHANGE LAST TIME STAMP
             }
 
             return loginHandler(await isAuthenticated);

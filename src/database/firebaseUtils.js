@@ -163,6 +163,31 @@ export async function _isSessionNew(id) {
     return false;
 }
 
+export async function _updateTotal(id, field, value) {
+    /* 
+        field: totalRounds, totalSessions, totalTime
+    */
+
+    //  increment rounds and sessions automatically when field refers to one of them
+    if (field === 'totalRounds' || field === 'totalSessions') {
+        value = 1;
+    }
+    // force totalTime to request a value
+    if (field === 'totalTime' && !value)
+        return console.error(`To update the ${field} you need to specify the elapsed time.`);
+
+    // fetch initial value and add new or increment it
+    const dbUpdateRef = ref(db, `games/${id}/stats/${field}`);
+    const initValue = (await get(dbUpdateRef)).val();
+
+    try {
+        await set(dbUpdateRef, value + initValue);
+        console.log(`${field} updated.`);
+    } catch (err) {
+        console.error(`There was a problem updating the ${field}`, err);
+    }
+}
+
 export async function _updateCurrSession(id) {
     // get last timeStamp
 
@@ -173,27 +198,34 @@ export async function _updateCurrSession(id) {
 
     const dbRefCurrSession = ref(db, `games/${id}/stats/currSession`);
     const currSessionInitData = (await get(dbRefCurrSession)).val();
+    const {rounds, sessionID, time} = await currSessionInitData;
 
     // calculate session time
     const elapsedTime = getTimeBetweenTimeStamps(await lastTimeStamp, currTimeStamp);
 
     // build New currSessionData Obj
+
     // Session ID remains the same. It's defined by the timeStamp of the time the session was created.
     const newCurrSessionObj = {
-        rounds: currSessionInitData.rounds + 1,
-        sessionID: currSessionInitData.sessionID,
-        time: currSessionInitData.time + elapsedTime,
+        rounds: rounds + 1,
+        sessionID: sessionID,
+        time: time + elapsedTime,
     };
 
     // Update Database with currSession and lastTimeStamp
 
     await set(dbRefCurrSession, newCurrSessionObj);
     await _updateLastTimeStamp(id, currTimeStamp);
+    await _updateTotal(id, 'totalRounds');
+    await _updateTotal(id, 'totalTime', elapsedTime);
 }
 
-// TODO UPDATE TOTAL ROUNDS
+// TODO BUILD createNewSession FUNCTION.
 
-// TODO UPDATE TOTAL TIME
-
-// TODO THEN MOVE TO CREATE NEW SESSION AND UPDATE SESSIONS ARRAY
-// TODO  UPDATE TOTAL SESSIONS
+export async function _createNewSession() {
+    // Get currSession
+    // Add currSeassion the sessions array
+    // Update totalSessions
+    // update lastTimeStamp
+    // create NewSession
+}

@@ -34,3 +34,6 @@ export function getTimeBetweenTimeStamps(start, end, unit) {
     const timeFrameStamp = end - start;
     return millisecondsToDecimal(timeFrameStamp, unit);
 }
+
+// console.log(getTimeStampNow());
+// console.log(new Date('19 Sep 2023 12:00:00').getTime());
