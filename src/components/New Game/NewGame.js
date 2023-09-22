@@ -9,99 +9,49 @@ import Input from '../UI/Input.js';
 import PlayersInput from './PlayersInput.js';
 import ModalBox from '../UI/ModalBox/ModalBox.js';
 
-import {_addNewGameDB} from '../../database/firebaseUtils.js';
+import {_addNewGameDB, _createNewGame} from '../../database/firebaseUtils.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
 
 export default function NewGame(props) {
     const {modal, setModal} = useModalBox();
 
-    const newGameHandler = e => {
+    const newGameHandler = async e => {
         e.preventDefault();
 
         // ---------------------- GET INPUTS VALUES ----------------------- //
+
         const inputs = [...e.target.querySelectorAll('input')];
-
-        // --------------------- CREATING GAME OBJECT --------------------- //
-        // ---------------------- GAME OBJECT INIT() ---------------------- //
-
-        const newGameObj = {
-            gameName: '',
-            gamePassword: '',
-            stats: {
-                lastTimeStamp: Number,
-
-                totalRounds: 0,
-                totalSessions: 0,
-                totalTime: 0,
-
-                currSession: {
-                    sessionID: Number,
-                    time: 0,
-                    rounds: 0,
-                },
-
-                sessions: [],
-            },
-            players: [],
-        };
-
-        // ------------- FEEDING GAME OBJECT WITH USER INPUTS ------------- //
-
-        inputs.forEach((input, index) => {
-            // GAMENAME INPUT IS THE FIRST INPUT
-            if (index === 0) newGameObj.gameName = input.value;
-
-            // PASSWORD INPUT IS THE LAST INPUT
-            if (index === inputs.length - 1) newGameObj.gamePassword = input.value;
-
-            // EVERYTHING IN BETWEEN IS PLAYERS NAMES
-            if (index > 0 && index < inputs.length - 1) {
-                newGameObj.players.push({
-                    playerName: input.value,
-                    points: {0: 0},
-                });
-            }
-        });
-
-        // ------------- FEEDING GAME OBJECT WITH TIME STAMPS ------------- //
-        // ------------------------- STATS INIT() ------------------------- //
-
-        // Add TimeStamp to NewGame -  CurrSession && lastTimeStamp
-        newGameObj.stats.currSession.sessionID = newGameObj.stats.lastTimeStamp = getTimeStampNow();
+        const gameName = inputs[0].value;
+        const gamePassword = inputs[inputs.length - 1].value;
+        const gamePlayers = inputs.slice(1, inputs.length - 1).map(player => player.value);
 
         // ---------------------------------------------------------------- //
         // ---------------- CHECKING FOR USERS BAD INPUTS ----------------- //
         // ---------------------------------------------------------------- //
 
         // CHECK FOR UNDERSIZE GAME NAMES
-        if (newGameObj.gameName.trim().length <= 2) return setModal({...modalObjInit, ...modalMsg.emptySmallGameName});
+        if (gameName.trim().length <= 2) return setModal({...modalObjInit, ...modalMsg.emptySmallGameName});
 
         // CHECK FOR OVERSIZED GAME NAMES
-        if (newGameObj.gameName.trim().length > 30) return setModal({...modalObjInit, ...modalMsg.bigGameName});
+        if (gameName.trim().length > 30) return setModal({...modalObjInit, ...modalMsg.bigGameName});
 
         // CHECK IF ALL PLAYERS WERE NAMED
-        if (newGameObj.players.some(player => player.playerName.trim().length === 0))
+        if (gamePlayers.some(player => player.trim().length === 0))
             return setModal({...modalObjInit, ...modalMsg.emptySmallPlayerName});
 
         // CHECK PASSWORD
-        if (newGameObj.gamePassword.length < 1) return setModal({...modalObjInit, ...modalMsg.emptySmallGamePassword});
+        if (gamePassword.length < 1) return setModal({...modalObjInit, ...modalMsg.emptySmallGamePassword});
 
         // ---------------------------------------------------------------- //
-        // ---------- UPDATING DATABASE AND LOGGING TO NEW GAME ----------- //
+        // ------------- CREATE NEW GAME AND UPDATE DATABASE -------------- //
         // ---------------------------------------------------------------- //
 
-        new Promise(async (res, rej) => {
-            try {
-                // -------------------------- UPDATE DB --------------------------- //
-                const ID = await _addNewGameDB(newGameObj, newGameObj.gameName);
+        const newGameID = await _createNewGame(gameName, gamePassword, gamePlayers);
 
-                // ---------------------- LOGIN TO NEW GAME ----------------------- //
+        if (newGameID === undefined || newGameID === null)
+            return setModal({...modalObjInit, ...modalMsg.duplicateGameName});
 
-                res(props.loginHandler(ID));
-            } catch (err) {
-                console.error("Ther's an issue on the New game login", err);
-            }
-        });
+        props.loginHandler(newGameID);
     };
 
     // ---------------------------------------------------------------- //

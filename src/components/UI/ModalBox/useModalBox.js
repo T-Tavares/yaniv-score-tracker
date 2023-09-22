@@ -95,6 +95,10 @@ export const modalMsg = {
         title: 'You do need a password for your game. 🤓',
         msg: 'Just make sure you remember it.',
     },
+    duplicateGameName: {
+        title: 'This game name is already taken. 💔',
+        msg: 'Please choose a different name for your game.',
+    },
 
     // ---------------------------- SCORE ----------------------------- //
     // -------------- Score.js MODAL MESSAGES AND TITLES -------------- //

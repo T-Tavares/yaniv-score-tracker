@@ -37,3 +37,5 @@ export function getTimeBetweenTimeStamps(start, end, unit) {
 
 // console.log(getTimeStampNow());
 // console.log(new Date('19 Sep 2023 12:00:00').getTime());
+
+logTimeFromMsStamp(1695040030250);

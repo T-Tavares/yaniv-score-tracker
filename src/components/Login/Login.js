@@ -1,11 +1,12 @@
 import React from 'react';
 import classes from './Login.module.scss';
-import {_authGame, _isSessionNew} from '../../database/firebaseUtils.js';
+import {_authGame, _isSessionNew, _ghostSessionHandler, _lastTimeStampHandler} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
 import ModalBox from '../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
+import {getTimeBetweenTimeStamps, getTimeStampNow} from '../../helpers/Helpers.js';
 
 export default function Login(props) {
     const {newGameHandler, loginHandler} = props;
@@ -35,16 +36,7 @@ export default function Login(props) {
 
         // -------- IF USER AND PASSWORD ARE VALID, LOGIN TO GAME --------- //
         if (await isAuthenticated) {
-            // TODO FIGURE A WAY TO RULE OUT LOGINS TO CHECK THE GAME ( NO SCORE ADDED )
-
-            if (await _isSessionNew(await isAuthenticated)) {
-                // UPDATE LAST TIME STAMP
-                console.log('create new session');
-            } else {
-                // Starts count of New Session
-                console.log('add to old session');
-            }
-
+            _ghostSessionHandler(await isAuthenticated, 'UPDATE', getTimeStampNow());
             return loginHandler(await isAuthenticated);
         }
 

@@ -1,32 +1,139 @@
 import firebaseApp from './firebaseConfig.js';
-import {getDatabase, ref, onValue, get, push, set, off} from 'firebase/database';
+import {getDatabase, ref, onValue, get, push, set, off, remove} from 'firebase/database';
 import {getTimeStampNow, millisecondsToDecimal, getTimeBetweenTimeStamps} from '../helpers/Helpers.js';
 
 const db = getDatabase(firebaseApp);
 const dbRef = ref(db, 'games/');
 
-// ---------------------- ADD NEW GAME TO DB ---------------------- //
+// ---------------------------------------------------------------- //
+// --------------------- CREATE NEW FUNCTIONS --------------------- //
+// ---------------------------------------------------------------- //
 
-export async function _addNewGameDB(gameObj, newGameName) {
+export async function _createNewGame(gameName, gamePassword, playersArr) {
+    // --------------------- CREATING GAME OBJECT --------------------- //
+    // ---------------------- GAME OBJECT INIT() ---------------------- //
+
+    const timeStampNow = getTimeStampNow();
+
+    const playersArray = playersArr.map(player => {
+        return {
+            playerName: player,
+            points: {0: 0},
+        };
+    });
+
+    const newGameObj = {
+        /*  
+                Commented Values are here just as a reference on how this object pattern will 
+                be built through the game.
+
+                I choose to keep this part of the code longer for readability and understanding
+                on future code reviews.
+            */
+
+        gameName: gameName,
+        gamePassword: gamePassword,
+        stats: {
+            lastTimeStamp: timeStampNow,
+
+            totalRounds: 0,
+            totalSessions: 0,
+            totalTime: 0,
+
+            ghostSessionID: timeStampNow, // Used to check logins with no actions
+
+            /* 
+                currSession: {
+                    sessionID: timeStampNow,
+                    time: 0,
+                    rounds: 0,
+                }, 
+            */
+
+            /* 
+                sessions: [], 
+            */
+        },
+        players: playersArray,
+    };
+
     let isDuplicate = false;
-    const gamesEntries = await get(dbRef);
+    const gamesEntries = await get(ref(db, `games/`));
 
     // Check for games with same Name
     gamesEntries.forEach(entry => {
-        if (entry.val().gameName === newGameName) {
+        if (entry.val().gameName === gameName) {
             isDuplicate = true;
-            console.log('Please change the game name. This one is taken.');
+            return new Error('This name is alredy taken, please chose another one.');
         }
     });
 
     // If name is clear, create New Game
     if (!isDuplicate) {
-        const response = await push(ref(db, `games/`), gameObj);
-        return response.key;
+        const response = await push(ref(db, `games/`), newGameObj); // push new game to DB and get it's obj back
+        return response.key; // return they game id
     }
 }
 
-// ---------------------- LOGIN TO A DB GAME ---------------------- //
+export async function _createNewSession(id) {
+    const timeStampNow = getTimeStampNow();
+    const currSessionRef = ref(db, `games/${id}/stats/currSession`);
+    const sessionsArrRef = ref(db, `games/${id}/stats/sessions`);
+    const totalSessionsRef = ref(db, `games/${id}/stats/totalSessions`);
+
+    // Get current values of sessions [] and currSession
+    const currSession = (await get(currSessionRef)).val();
+    const sessionsArr = (await get(sessionsArrRef)).val();
+
+    // Sort new sessions []
+    let newSessionsArr;
+
+    if (!sessionsArr) newSessionsArr = [currSession]; // exeption for the first session added
+    else newSessionsArr = [...sessionsArr, currSession];
+
+    // Update sessions []
+    await set(sessionsArrRef, newSessionsArr);
+
+    // clear currSessioon
+    await set(currSessionRef, {rounds: 0, sessionID: timeStampNow, time: 0});
+
+    // Update totalSessions
+    const totalSessions = (await get(totalSessionsRef)).val();
+    await set(totalSessionsRef, totalSessions + 1);
+
+    // Update lastTimeStamp
+    await _lastTimeStampHandler(id, 'UPDATE', timeStampNow);
+}
+
+// ---------------------- ADD NEW GAME TO DB ---------------------- //
+
+// export async function _addNewGameDB(gameObj, newGameName) {
+
+//     let isDuplicate = false;
+//     const gamesEntries = await get(dbRef);
+
+//     // Check for games with same Name
+//     gamesEntries.forEach(entry => {
+//         if (entry.val().gameName === newGameName) {
+//             isDuplicate = true;
+//             console.log('Please change the game name. This one is taken.');
+
+//             // TODO RETURN MESSAGE TO BE DISPLAYED ON ERROR/WARNING MODAL
+//         }
+//     });
+
+//     // If name is clear, create New Game
+//     if (!isDuplicate) {
+//         console.log('game added to DB');
+//         const response = await push(ref(db, `games/`), gameObj);
+//         console.log(response);
+//         return response.key;
+//     }
+// }
+
+// ---------------------------------------------------------------- //
+// ------------- AUTHENTICATIONS AND CHECK FUNCTIONS -------------- //
+// ---------------------------------------------------------------- //
 
 export async function _authGame(inputGameName, inputPassword) {
     let loggedGameID = false;
@@ -52,7 +159,26 @@ export async function _authGame(inputGameName, inputPassword) {
     });
 }
 
-// -------------------- RETRIEVE LOGGED GAMNE --------------------- //
+export async function _isSessionNew(id) {
+    /* 
+        A new session is fired after a 25 min of difference from the last score added
+
+        returns true if session is new
+                false if not
+    */
+
+    const lastTimeStamp = await _lastTimeStampHandler(id, 'GET');
+    const currTimeStamp = getTimeStampNow();
+
+    const timeDiff = millisecondsToDecimal(currTimeStamp - lastTimeStamp, 'min');
+
+    if (timeDiff > 25) return true;
+    return false;
+}
+
+// ---------------------------------------------------------------- //
+// ----------------------- FETCH GAME DATA ------------------------ //
+// ---------------------------------------------------------------- //
 
 export function _fetchLoggedGameData(id) {
     if (!id) {
@@ -82,7 +208,9 @@ export function _fetchLoggedGameData(id) {
     });
 }
 
-// --------------------- SUM NEW SCORE TO DB ---------------------- //
+// ---------------------------------------------------------------- //
+// --------------- UPDATE SCORE AND STATS FUNCTIONS --------------- //
+// ---------------------------------------------------------------- //
 
 export async function _updateScoreDB(id, scoreArr) {
     const dbGameRef = ref(db, `games/${id}/players`);
@@ -128,41 +256,6 @@ export async function _updateScoreDB(id, scoreArr) {
     return false;
 }
 
-// ---------------------------------------------------------------- //
-// ---------------------- SESSIONS FUNCTIONS ---------------------- //
-// ---------------------------------------------------------------- //
-
-export async function _getLastTimeStamp(id) {
-    const dbRefTimeStamp = ref(db, `games/${id}/stats/lastTimeStamp`);
-    const lastTimeStamp = (await get(dbRefTimeStamp)).val();
-    return lastTimeStamp;
-}
-
-export async function _updateLastTimeStamp(id, newTimeStamp) {
-    const dbRefTimeStamp = ref(db, `games/${id}/stats/lastTimeStamp`);
-    try {
-        await set(dbRefTimeStamp, newTimeStamp);
-    } catch (err) {
-        console.error(`There was a problem on fetching the Time Stamp`, err);
-    }
-}
-
-export async function _isSessionNew(id) {
-    /* 
-        A new session is fired after a 30 min of difference from the last score added
-
-        returns true if session is new
-                false if not
-    */
-
-    const lastTimeStamp = _getLastTimeStamp(id);
-    const currTimeStamp = getTimeStampNow();
-    const timeDiff = millisecondsToDecimal(currTimeStamp - lastTimeStamp, 'min');
-
-    if (timeDiff > 30) return true;
-    return false;
-}
-
 export async function _updateTotal(id, field, value) {
     /* 
         field: totalRounds, totalSessions, totalTime
@@ -191,8 +284,9 @@ export async function _updateTotal(id, field, value) {
 export async function _updateCurrSession(id) {
     // get last timeStamp
 
-    const lastTimeStamp = _getLastTimeStamp(id);
+    const lastTimeStamp = _lastTimeStampHandler(id, 'GET');
     const currTimeStamp = getTimeStampNow();
+    console.log(currTimeStamp);
 
     // get currSession Data
 
@@ -215,17 +309,67 @@ export async function _updateCurrSession(id) {
     // Update Database with currSession and lastTimeStamp
 
     await set(dbRefCurrSession, newCurrSessionObj);
-    await _updateLastTimeStamp(id, currTimeStamp);
+    await _lastTimeStampHandler(id, 'UPDATE', currTimeStamp);
     await _updateTotal(id, 'totalRounds');
     await _updateTotal(id, 'totalTime', elapsedTime);
 }
 
-// TODO BUILD createNewSession FUNCTION.
+export async function _newCurrSession(id) {}
 
-export async function _createNewSession() {
-    // Get currSession
-    // Add currSeassion the sessions array
-    // Update totalSessions
-    // update lastTimeStamp
-    // create NewSession
+// ---------------------------------------------------------------- //
+// ---------------- TIME AND TIMESTAMPS FUNCTINOS ----------------- //
+// ---------------------------------------------------------------- //
+
+export async function _lastTimeStampHandler(id, action, value) {
+    /* 
+        Handles lastTimeStamp GET and UPDATE
+        Value have to be set if action is SET
+    */
+
+    const dbLastTimeStamp = ref(db, `games/${id}/stats/lastTimeStamp`);
+
+    try {
+        switch (action) {
+            case 'GET':
+                return (await get(dbLastTimeStamp)).val();
+            case 'UPDATE':
+                await set(dbLastTimeStamp, value);
+                return (await get(dbLastTimeStamp)).val();
+
+            default:
+                break;
+        }
+    } catch (err) {
+        console.error(`There was a problem on the _lastTimeStampHandler: ${action}`, err);
+    }
+}
+
+export async function _ghostSessionHandler(id, action, value) {
+    /* 
+        Handles ghostSessionID GET, UPDATE and DELETE
+        Value have to be set if action is SET
+    */
+    const dbGhostSession = ref(db, `games/${id}/stats/ghostSessionID`);
+    try {
+        switch (action) {
+            case 'GET':
+                return (await get(dbGhostSession)).val();
+
+            case 'UPDATE':
+                await set(dbGhostSession, value);
+                return (await get(dbGhostSession)).val();
+
+            case 'DELETE':
+                return await remove(dbGhostSession);
+
+            default:
+                break;
+        }
+    } catch (err) {
+        console.error(`There was a problem on the _ghostSessionHandler: ${action}`, err);
+    }
+}
+
+export async function _getTimeFromGSorLTS() {
+    // Get time from GhostSession or LastTimeStamp until now.
 }
