@@ -212,14 +212,87 @@ export function _fetchLoggedGameData(id) {
 // --------------- UPDATE SCORE AND STATS FUNCTIONS --------------- //
 // ---------------------------------------------------------------- //
 
-export async function _updateScoreDB(id, scoreArr) {
+export async function _feedSessionsArray(id) {
+    const sessionsRef = ref(db, `games/${id}/stats/sessions`);
+    const currSessionRef = ref(db, `games/${id}/stats/currSession`);
+
+    const currSession = (await get(currSessionRef)).val();
+    let sessions = (await get(sessionsRef)).val();
+    try {
+        if (currSession === undefined || currSession === null) {
+            throw new Error(`There's no current session to be transfered to the sessions array`);
+        }
+        if (sessions === undefined || sessions === null) {
+            sessions = [];
+        }
+
+        const newSessions = [...sessions, currSession];
+
+        const result = await set(sessionsRef, newSessions);
+        console.log(result);
+    } catch (err) {
+        console.error(
+            `There was a problem updating the current session to the sessions list. Contact our support team for more details.`
+        );
+    }
+}
+
+export async function _sessionsHandler(id) {
+    // is ghost session? yes => count with ghostSessionID / no => count with lastTimeStamp
+    // is session new?
+    // Yes - // add oldSession to sessions array /
+    // create new session (currSession)/
+    // add to currSession
+    // No -  //add to currSession
+}
+
+export async function _updateScore(id, scoreArr) {
+    // TODO KEEP WORKING ON UPDATED SCORE FUNCTION
+
+    // REFS
+    // const currSessionRef = ref(db, `games/${id}/stats/currSession`);
+    /* 
+        The GhostSession was created to mitigate erros on counting the time of each session.
+        simple logins to check the score will not count as a session.
+    */
+
+    // CHECK GHOST SESSION
+    const isGhostSession = await _ghostSessionHandler(id, 'IS');
+    let lastTimeStamp = (await isGhostSession)
+        ? await _ghostSessionHandler(id, 'GET')
+        : _lastTimeStampHandler(id, 'GET');
+
+    // PASS POINTS THROUGH RULES CHECK
+    const scoreANDlucky = await _scoreRulesCheck(id, scoreArr);
+    const {scoreDataArr, playersNum, luckyPlayersIndex} = scoreANDlucky;
+
+    // UPDATE DATABASE
+    for (let n = 0; n <= playersNum; n++) {
+        await set(ref(db, `games/${id}/players/${n}/points`), scoreDataArr[n]);
+        console.log('points added to DB: ', scoreDataArr[n]);
+    }
+
+    // CHECK IF NEW SESSION
+    const elapsedTime = getTimeBetweenTimeStamps(lastTimeStamp, getTimeStampNow(), 'min');
+    if (elapsedTime < 30) {
+        // add to curr Session
+        // delete _ghostSession
+    } else {
+        // ----- CREATE NEW SESION ----- //
+        // move currSession to sessionsArray
+        // clear currSession
+        // add to curr Session
+        // delete _ghostSession
+    }
+}
+
+export async function _scoreRulesCheck(id, scoreArr) {
     const dbGameRef = ref(db, `games/${id}/players`);
     const playersNum = (await get(dbGameRef)).val().length - 1;
 
     const scoreDataArr = []; // to hold the formated score array to be pushed to the DB
     const reduceWinnerIndex = []; // to catch the index of any player that got deduced points
 
-    // duplicate old score and add new score
     for (let n = 0; n <= playersNum; n++) {
         const oldScoreData = (await get(ref(db, `games/${id}/players/${n}/points`))).val();
         const lastScore = +oldScoreData.slice(-1);
@@ -245,16 +318,110 @@ export async function _updateScoreDB(id, scoreArr) {
         // push to the updated score array
         scoreDataArr.push(oldScoreData);
     }
+    let luckyPlayersIndex;
 
-    // Update Database
-    for (let n = 0; n <= playersNum; n++) {
-        await set(ref(db, `games/${id}/players/${n}/points`), scoreDataArr[n]);
-    }
+    if (reduceWinnerIndex.length > 0) luckyPlayersIndex = reduceWinnerIndex;
+    luckyPlayersIndex = false;
 
-    // Return winners index list or false
-    if (reduceWinnerIndex.length > 0) return reduceWinnerIndex;
-    return false;
+    return {
+        scoreDataArr: scoreDataArr,
+        playersNum: playersNum,
+        luckyPlayersIndex: luckyPlayersIndex,
+    };
 }
+
+//
+// export async function _updateScoreBackup(id) {
+//     //prettier-ignore
+//     /*
+//         The GhostSession was created to mitigate erros on counting the time of each session.
+//         simple logins to check the score will not count as a session.
+//     */
+
+//     // 1 check if ghostSession.
+//     const isGhostSession = await _ghostSessionHandler(id, 'IS');
+
+//     if (isGhostSession) {
+//         // 1.1 calculate time elapsed since login(ghost session)
+//         const ghostSessionDiff = await _ghostSessionHandler(id, 'DIFF');
+
+//         //  IF (time elapsed > 30 min) => NEW SESSION
+//         if (ghostSessionDiff > 30) {
+//             //  copy currSession to sessionsArr
+//             await _feedSessionsArray(id);
+//             //  create new session with getTimeStampNow() (currSession)
+//         }
+//     }
+
+//     //  ELSE
+//     //  copy currSession to sessionsArr
+//     //  create new session with ghostSessionID (currSession)
+
+//     //  update currSession
+//     //  Delete ghost session
+//     //  Update lastTimeStamp
+//     //  Update Score
+
+//     // 2 else
+//     // 2.1 calculate time elapsed since login(ghost session)
+
+//     //  IF time elapsed > 30 min
+//     //  copy currSession to sessionsArr
+//     //  create new session with ghostSessionID (currSession)
+
+//     //  ELSE
+//     //  Do nothing and proceed to update currSession
+
+//     //  update currSession
+//     //  Update lastTimeStamp
+//     //  Update Score
+
+//     // 2.2 Update
+// }
+
+// export async function _updateScoreDB(id, scoreArr) {
+//     const dbGameRef = ref(db, `games/${id}/players`);
+//     const playersNum = (await get(dbGameRef)).val().length - 1;
+
+//     const scoreDataArr = []; // to hold the formated score array to be pushed to the DB
+//     const reduceWinnerIndex = []; // to catch the index of any player that got deduced points
+
+//     // duplicate old score and add new score
+//     for (let n = 0; n <= playersNum; n++) {
+//         const oldScoreData = (await get(ref(db, `games/${id}/players/${n}/points`))).val();
+//         const lastScore = +oldScoreData.slice(-1);
+
+//         let currentScore = lastScore + scoreArr[n];
+
+//         // Yaniv Reduce points rules
+//         // number is below 100 / last score is multiple of 50 ( to not reduce again) / current score it multiple of 50
+//         if (currentScore <= 100 && lastScore % 50 !== 0 && lastScore % 50 !== 0 && currentScore % 50 === 0) {
+//             currentScore = currentScore - 50;
+//             reduceWinnerIndex.push(n);
+//         }
+
+//         // number is below 1000 / last score is multiple of 500 ( to not reduce again) / current score it multiple of 500
+//         if (currentScore >= 1000 && lastScore % 500 !== 0 && currentScore % 500 === 0) {
+//             currentScore = currentScore - 500;
+//             reduceWinnerIndex.push(n);
+//         }
+
+//         // add to the last point in the array
+//         oldScoreData.push(currentScore);
+
+//         // push to the updated score array
+//         scoreDataArr.push(oldScoreData);
+//     }
+
+//     // Update Database
+//     for (let n = 0; n <= playersNum; n++) {
+//         await set(ref(db, `games/${id}/players/${n}/points`), scoreDataArr[n]);
+//     }
+
+//     // Return winners index list or false
+//     if (reduceWinnerIndex.length > 0) return reduceWinnerIndex;
+//     return false;
+// }
 
 export async function _updateTotal(id, field, value) {
     /* 
@@ -348,6 +515,8 @@ export async function _ghostSessionHandler(id, action, value) {
     /* 
         Handles ghostSessionID GET, UPDATE and DELETE
         Value have to be set if action is SET
+
+        TODO WORK ON THE DESCRIPTION OF EACH CASE AND USE
     */
     const dbGhostSession = ref(db, `games/${id}/stats/ghostSessionID`);
     try {
@@ -362,14 +531,22 @@ export async function _ghostSessionHandler(id, action, value) {
             case 'DELETE':
                 return await remove(dbGhostSession);
 
+            case 'DIFF':
+                // Returns time difference between last ghostSessionTimeStamp and Now in minutes.
+                const ghostTimeStamp = (await get(dbGhostSession)).val();
+                const nowTimeStamp = getTimeStampNow();
+                return getTimeBetweenTimeStamps(ghostTimeStamp, nowTimeStamp, 'min');
+
+            case 'IS':
+                // Returns true or false if the GhostSessionID exists or not
+                const GS = (await get(dbGhostSession)).val();
+                if (GS === undefined || GS === null) return false;
+                return true;
+
             default:
                 break;
         }
     } catch (err) {
         console.error(`There was a problem on the _ghostSessionHandler: ${action}`, err);
     }
-}
-
-export async function _getTimeFromGSorLTS() {
-    // Get time from GhostSession or LastTimeStamp until now.
 }

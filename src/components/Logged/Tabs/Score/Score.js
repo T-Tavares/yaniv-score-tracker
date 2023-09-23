@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import classes from './Score.module.scss';
 import {
     _fetchLoggedGameData,
-    _updateScoreDB,
+    _updateScore,
     _isSessionNew,
     _updateCurrSession,
     _lastTimeStampHandler,
@@ -47,19 +47,9 @@ export default function Score(props) {
         const areInputsEmpty = inputedScoreArr.every(input => input === 0);
         if (!areInputsNum || areInputsEmpty) return setModal({...modalObjInit, ...modalMsg.wrongInputs});
 
-        // ----------------------- SESSION HANDLERS ----------------------- //
-
-        if (await _isSessionNew(gameID)) {
-            console.log('create New Session');
-            _lastTimeStampHandler(gameID, 'UPDATE', getTimeStampNow());
-        } else {
-            console.log('add to old session');
-            _updateCurrSession(gameID);
-        }
-
         // ----------------------- UPDATE DATABASE ------------------------ //
         /* 
-        
+            TODO CHECK IF THIS DESCRIPTION MATCHS THE NEW FUNCTION
             _updateScoreDB method will return an array of players if any player
             reach a multiple of 50 / 500 score and gets points deduced.
 
@@ -68,7 +58,10 @@ export default function Score(props) {
             This will be later used to render lucky players names on a modal.
 
         */
-        const luckyPlayersIndexArr = await _updateScoreDB(gameID, inputedScoreArr);
+        await _updateScore(gameID, inputedScoreArr);
+
+        // TODO IMPLEMENT MODAL RENDER WHEN PLAYER GET LESS POINTS ( CHECK OBJ RETURNED FROM _scoreRulesCheck - PASS IT TO _updateScore AND SORT HERE)
+        // TODO KEEP WORKING ON UPDATED SCORE FUNCTION
 
         // ---------------------- RERENDER NEW SCORE ---------------------- //
         await fetchDataHandler();
@@ -79,7 +72,7 @@ export default function Score(props) {
             lucky players handler will only render the modal if the luckyPlayersIndexArr is an array
         
         */
-        luckyPlayersHandler(luckyPlayersIndexArr);
+        // luckyPlayersHandler(luckyPlayersIndexArr);
 
         // ------------------------- CLEAR INPUTS ------------------------- //
         inputsArrEls.forEach(inp => (inp.value = ''));
