@@ -24,6 +24,7 @@ export default function ScoreList(props) {
             if (currScore === indexesObj.smallestScore) {
                 indexesObj.winnerIndexArray.push(currIndex);
             }
+
             if (currIndex === 0 || currScore < indexesObj.smallestScore) {
                 indexesObj.smallestScore = currScore;
                 indexesObj.winnerIndexArray = [currIndex];
@@ -32,6 +33,12 @@ export default function ScoreList(props) {
         },
         {winnerIndexArray: [], smallestScore: 0}
     );
+
+    // -------------------- GET LAST ROUND WINNER --------------------- //
+
+    // TODO LAST ROUND WINNER
+    // TODO APPLY RIGHT CLASS FOR LAST ROUND WINNER AND GAME WINNER
+    // TODO CREATE roundWinner reduce map to get index of last round winner
 
     // ------------- BUILD TABLE WITH PLAYERS AND SCORES -------------- //
     // ---------------------- THREE LAST SCORES ----------------------- //
@@ -57,6 +64,7 @@ export default function ScoreList(props) {
         // -------------------- ScoreList.js COMPONENT -------------------- //
         // ---------------------------------------------------------------- //
         return (
+            // <tr className={winner ? classes['last-round-winner'] : ''} key={scoreDataPlayers[index] + '_key'}>
             <tr className={winner ? classes.winning : ''} key={scoreDataPlayers[index] + '_key'}>
                 <th>{scoreDataPlayers[index]}</th>
                 <th>{thirdLast ? thirdLast : ''}</th>

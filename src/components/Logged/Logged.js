@@ -1,11 +1,18 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import classes from './Logged.module.scss';
 
 import Score from './Tabs/Score/Score.js';
 import Stats from './Tabs/Stats.js';
 
+import {_ghostTimeStampHandler} from '../../database/firebaseUtils.js';
+import {getTimeStampNow} from '../../helpers/Helpers.js';
+
 export default function Logged(props) {
     const [activeTab, setActiveTab] = useState('score');
+
+    useEffect(() => {
+        _ghostTimeStampHandler(props.gameID, 'UPDATE', getTimeStampNow());
+    }, [props.gameID]);
 
     const scoreTabHandler = () => setActiveTab('score');
     const statsTabHandler = () => setActiveTab('stats');

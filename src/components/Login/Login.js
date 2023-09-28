@@ -1,12 +1,11 @@
 import React from 'react';
 import classes from './Login.module.scss';
-import {_authGame, _isSessionNew, _ghostSessionHandler, _lastTimeStampHandler} from '../../database/firebaseUtils.js';
+import {_authGame} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
 import ModalBox from '../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
-import {getTimeBetweenTimeStamps, getTimeStampNow} from '../../helpers/Helpers.js';
 
 export default function Login(props) {
     const {newGameHandler, loginHandler} = props;
@@ -35,10 +34,7 @@ export default function Login(props) {
         });
 
         // -------- IF USER AND PASSWORD ARE VALID, LOGIN TO GAME --------- //
-        if (await isAuthenticated) {
-            _ghostSessionHandler(await isAuthenticated, 'UPDATE', getTimeStampNow());
-            return loginHandler(await isAuthenticated);
-        }
+        if (await isAuthenticated) return loginHandler(await isAuthenticated);
 
         // ------ RENDER MODAL IF USER / PASSWORD IS NOT FOUND ON DB ------ //
         setModal({...modalObjInit, ...modalMsg.userNotFound});

@@ -1,16 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import classes from './Score.module.scss';
-import {
-    _fetchLoggedGameData,
-    _updateScore,
-    _isSessionNew,
-    _updateCurrSession,
-    _lastTimeStampHandler,
-} from '../../../../database/firebaseUtils.js';
+
+import {_fetchLoggedGameData, _updateScore} from '../../../../database/firebaseUtils.js';
+
 import ScoreList from './ScoreList.js';
 import ModalBox from '../../../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../../../UI/ModalBox/useModalBox.js';
-import {getTimeStampNow} from '../../../../helpers/Helpers.js';
+
+// TODO MAKE INPUTS SHOW A NUMBER KEYBOARD WHEN ON FOCUS
 
 export default function Score(props) {
     const [scoreData, setScoreData] = useState([]);
@@ -35,7 +32,6 @@ export default function Score(props) {
 
     async function addToScoreHandler(e) {
         e.preventDefault();
-
         // ----------------------- GET USER INPUTS  ----------------------- //
 
         const inputsArrEls = [...e.target.querySelectorAll('input')];
@@ -58,10 +54,7 @@ export default function Score(props) {
             This will be later used to render lucky players names on a modal.
 
         */
-        await _updateScore(gameID, inputedScoreArr);
-
-        // TODO IMPLEMENT MODAL RENDER WHEN PLAYER GET LESS POINTS ( CHECK OBJ RETURNED FROM _scoreRulesCheck - PASS IT TO _updateScore AND SORT HERE)
-        // TODO KEEP WORKING ON UPDATED SCORE FUNCTION
+        const luckyPlayersIndexArr = await _updateScore(gameID, inputedScoreArr);
 
         // ---------------------- RERENDER NEW SCORE ---------------------- //
         await fetchDataHandler();
@@ -72,7 +65,7 @@ export default function Score(props) {
             lucky players handler will only render the modal if the luckyPlayersIndexArr is an array
         
         */
-        // luckyPlayersHandler(luckyPlayersIndexArr);
+        luckyPlayersHandler(luckyPlayersIndexArr);
 
         // ------------------------- CLEAR INPUTS ------------------------- //
         inputsArrEls.forEach(inp => (inp.value = ''));
