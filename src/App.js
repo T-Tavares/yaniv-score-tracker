@@ -7,8 +7,10 @@ import Logged from './components/Logged/Logged.js';
 import {ModalBoxProvider} from './components/UI/ModalBox/useModalBox.js';
 import {useState} from 'react';
 
+// TODO WORK ON A RULES AND HOW THE APP WORKS SECTION
+
 function App() {
-    // const testingAccLog = '-NeBlSSK-DHGAshijTjD';
+    // const testingAccLog = '-NfYofx5Gu2nraTQTsBZ';
     const [appScreen, setAppScreen] = useState('');
     const [gameID, setGameID] = useState('');
 

@@ -36,9 +36,19 @@ export default function ScoreList(props) {
 
     // -------------------- GET LAST ROUND WINNER --------------------- //
 
-    // TODO LAST ROUND WINNER
-    // TODO APPLY RIGHT CLASS FOR LAST ROUND WINNER AND GAME WINNER
-    // TODO CREATE roundWinner reduce map to get index of last round winner
+    const roundWinner = scoreDataArrays.reduce((winner, currArray, currIndex) => {
+        const lastScore = +currArray.slice(-1);
+        const beforeLastScore = +currArray.slice(-2, -1);
+
+        if (lastScore === beforeLastScore) winner = currIndex;
+        return winner;
+    }, 0);
+
+    // TODO INVESTIGATE BUG ON MOBILE FOR THE INDICATOR OF THE LAST ROUND WINNER
+    /* 
+        The little yellow triangle renders multiple times for each number on the score and not
+        just in front of the player name
+    */
 
     // ------------- BUILD TABLE WITH PLAYERS AND SCORES -------------- //
     // ---------------------- THREE LAST SCORES ----------------------- //
@@ -54,24 +64,29 @@ export default function ScoreList(props) {
         if (score.length === 2) {
             [secondLast, last] = score.slice(-2);
         }
-        // --------- // AFTER 3 POINTS LOGIC GOES BACK TO DEFAULT --------- //
+        // ----------  AFTER 3 POINTS LOGIC GOES BACK TO DEFAULT ---------- //
 
         if (score.length >= 3) {
             [thirdLast, secondLast, last] = score.slice(-3);
         }
 
+        // --------------- WINNER AND ROUND WINNER CLASSES ---------------- //
+
+        const currentW = winner ? `${classes.winning}` : '';
+        const roundW = roundWinner === index ? `${classes['last-round-winner']}` : '';
+
         // ---------------------------------------------------------------- //
         // -------------------- ScoreList.js COMPONENT -------------------- //
         // ---------------------------------------------------------------- //
         return (
-            // <tr className={winner ? classes['last-round-winner'] : ''} key={scoreDataPlayers[index] + '_key'}>
-            <tr className={winner ? classes.winning : ''} key={scoreDataPlayers[index] + '_key'}>
+            <tr className={`${currentW} ${roundW}`} key={scoreDataPlayers[index] + '_key'}>
                 <th>{scoreDataPlayers[index]}</th>
                 <th>{thirdLast ? thirdLast : ''}</th>
                 <th>{secondLast ? secondLast : ''}</th>
                 <th>{last ? last : ''}</th>
                 <th>
-                    <Input />
+                    {/* TODO TRYING TO GET NUMBER KEYBOARD FOR INPUTS */}
+                    <Input type="number" />
                 </th>
             </tr>
         );

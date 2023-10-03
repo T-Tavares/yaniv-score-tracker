@@ -2,14 +2,12 @@ import React from 'react';
 
 import classes from './NewGame.module.scss';
 
-import {getTimeStampNow} from '../../helpers/Helpers.js';
-
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
 import PlayersInput from './PlayersInput.js';
 import ModalBox from '../UI/ModalBox/ModalBox.js';
 
-import {_addNewGameDB, _createNewGame} from '../../database/firebaseUtils.js';
+import {_createNewGame} from '../../database/firebaseUtils.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
 
 export default function NewGame(props) {

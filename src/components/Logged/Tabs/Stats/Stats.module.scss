@@ -1,0 +1,44 @@
+@import '../../../UI/colours.module.scss';
+
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5vw 0;
+
+    background-color: $list-white-bg;
+}
+
+.stats-btn {
+    width: 40%;
+
+    border: none;
+    border-radius: 2vw 2vw 0 0;
+
+    padding: 2vw;
+    margin: 0 auto;
+
+    background-color: $primary-btn;
+    color: #fff;
+
+    &:first-of-type {
+        margin-right: 1vw;
+    }
+    &:last-of-type {
+        margin-left: 1vw;
+    }
+    &.active {
+        background-color: $stats-background-colour;
+        color: $primary-btn;
+    }
+}
+
+.stats-active-tab {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    background-color: $stats-background-colour;
+    justify-content: space-between;
+    flex: 1 0 1;
+    gap: 3vw;
+    padding: 5vw;
+}

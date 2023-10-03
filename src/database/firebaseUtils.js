@@ -145,13 +145,12 @@ export async function _authGame(inputGameName, inputPassword) {
 // ----------------------- FETCH GAME DATA ------------------------ //
 // ---------------------------------------------------------------- //
 
-export function _fetchLoggedGameData(id) {
+export function _fetchLoggedGameData(id, narrowPath) {
     if (!id) {
         console.error('No Game ID Found');
         return;
     }
-
-    const dbGameRef = ref(db, `games/${id}`);
+    const dbGameRef = ref(db, `games/${id}${narrowPath ? narrowPath : ''}`);
 
     return new Promise((resolve, reject) => {
         const callback = snapshot => {
@@ -295,6 +294,8 @@ async function _newSession(id) {
         time: 0,
         rounds: 0,
     });
+    // UPDATE TOTAL SESSIONS
+    await _updateTotal(id, 'totalSessions');
 }
 
 // ---------------------------------------------------------------- //

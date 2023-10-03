@@ -1,0 +1,43 @@
+@import '../../../../UI/colours.module.scss';
+
+.box,
+.rectangle,
+.graph {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    border-radius: 2vw;
+    padding: 3vw;
+    background-color: $stats-box-background-colour;
+
+    h1 {
+        font-size: 8vw;
+        font-weight: 100;
+        letter-spacing: 1px;
+        color: $stats-box-font-colour;
+        // text-align: center;
+    }
+    p {
+        color: $list-dark-bg-row;
+
+        font-size: 4vw;
+        &:last-child {
+            text-align: end;
+        }
+    }
+}
+
+.box {
+    flex: 0 0 calc(50% - 10vw); // 10vw is to compensate 7vw padding outside box and 3vw padding inside box
+    aspect-ratio: 1/1;
+    h1 {
+        font-size: 12vw;
+    }
+}
+
+.rectangle {
+    flex: 1 1 100%;
+}
+.graph {
+}
