@@ -1,7 +1,7 @@
 import classes from './StatsBox.module.scss';
 
 export default function StatsBox(props) {
-    // TODO Graph Stats Box
+    // TODO GRAPH STATS BOX
     let {title, value, unit} = props;
 
     let statLayoutClass;

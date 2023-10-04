@@ -4,6 +4,10 @@ import {getTimeStampNow, getTimeBetweenTimeStamps} from '../helpers/Helpers.js';
 
 const db = getDatabase(firebaseApp);
 
+//TODO REVIEW WHAT I HAVE SO FAR AND ADD ERROR HANDLING FOR ANY DB OPERATION THAT DOES NOT HAVE IT
+//TODO SET UP A SPACE ON THE DATABASE TO REGISTER ANY ERRORS.
+//TODO CREATE A FUNCTION TO PRINT OR DISPLAY THOSE ERROR TO ME.
+
 // ---------------------------------------------------------------- //
 
 export async function _updateScore(id, scoreArr) {

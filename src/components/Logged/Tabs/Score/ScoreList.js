@@ -1,5 +1,6 @@
 import classes from './ScoreList.module.scss';
 import Input from '../../../UI/Input.js';
+import {Fragment} from 'react';
 
 export default function ScoreList(props) {
     let last, secondLast, thirdLast; // logic to render initial scores properly
@@ -44,7 +45,6 @@ export default function ScoreList(props) {
         return winner;
     }, 0);
 
-    // TODO INVESTIGATE BUG ON MOBILE FOR THE INDICATOR OF THE LAST ROUND WINNER
     /* 
         The little yellow triangle renders multiple times for each number on the score and not
         just in front of the player name
@@ -73,22 +73,25 @@ export default function ScoreList(props) {
         // --------------- WINNER AND ROUND WINNER CLASSES ---------------- //
 
         const currentW = winner ? `${classes.winning}` : '';
-        const roundW = roundWinner === index ? `${classes['last-round-winner']}` : '';
+        // const roundW = roundWinner === index ? `${classes['last-round-winner']}` : '';
+        const roundW = roundWinner === index ? <div className={`${classes['last-round-winner']}`}></div> : '';
 
         // ---------------------------------------------------------------- //
         // -------------------- ScoreList.js COMPONENT -------------------- //
         // ---------------------------------------------------------------- //
         return (
-            <tr className={`${currentW} ${roundW}`} key={scoreDataPlayers[index] + '_key'}>
-                <th>{scoreDataPlayers[index]}</th>
-                <th>{thirdLast ? thirdLast : ''}</th>
-                <th>{secondLast ? secondLast : ''}</th>
-                <th>{last ? last : ''}</th>
-                <th>
-                    {/* TODO TRYING TO GET Tel NUMBER KEYBOARD FOR INPUTS */}
-                    <Input type="number" />
-                </th>
-            </tr>
+            <Fragment>
+                {roundW}
+                <tr className={`${currentW}`} key={scoreDataPlayers[index] + '_key'}>
+                    <th>{scoreDataPlayers[index]}</th>
+                    <th>{thirdLast ? thirdLast : ''}</th>
+                    <th>{secondLast ? secondLast : ''}</th>
+                    <th>{last ? last : ''}</th>
+                    <th>
+                        <Input type="number" />
+                    </th>
+                </tr>
+            </Fragment>
         );
     });
 }

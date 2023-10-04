@@ -7,8 +7,6 @@ import ScoreList from './ScoreList.js';
 import ModalBox from '../../../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../../../UI/ModalBox/useModalBox.js';
 
-// TODO MAKE INPUTS SHOW A NUMBER KEYBOARD WHEN ON FOCUS
-
 export default function Score(props) {
     const [scoreData, setScoreData] = useState([]);
     const {modal, setModal} = useModalBox();
