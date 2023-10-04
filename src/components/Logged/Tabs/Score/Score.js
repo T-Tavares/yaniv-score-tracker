@@ -44,8 +44,8 @@ export default function Score(props) {
         if (!areInputsNum || areInputsEmpty) return setModal({...modalObjInit, ...modalMsg.wrongInputs});
 
         // ----------------------- UPDATE DATABASE ------------------------ //
-        /* 
-            TODO CHECK IF THIS DESCRIPTION MATCHS THE NEW FUNCTION
+        //TODO CHECK IF THIS DESCRIPTION MATCHS THE NEW FUNCTION
+        /*  
             _updateScoreDB method will return an array of players if any player
             reach a multiple of 50 / 500 score and gets points deduced.
 

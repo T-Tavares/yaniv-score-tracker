@@ -85,7 +85,7 @@ export default function ScoreList(props) {
                 <th>{secondLast ? secondLast : ''}</th>
                 <th>{last ? last : ''}</th>
                 <th>
-                    {/* TODO TRYING TO GET NUMBER KEYBOARD FOR INPUTS */}
+                    {/* TODO TRYING TO GET Tel NUMBER KEYBOARD FOR INPUTS */}
                     <Input type="number" />
                 </th>
             </tr>

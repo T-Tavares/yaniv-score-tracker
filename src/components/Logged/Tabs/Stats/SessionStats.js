@@ -4,6 +4,8 @@ import {_fetchLoggedGameData} from '../../../../database/firebaseUtils.js';
 
 import {getTimeStampNow, getTimeBetweenTimeStamps} from '../../../../helpers/Helpers.js';
 
+// TODO BLANK SESSION STATS SECTION IF LAST TIME STAMP IS > 90 MIN
+
 export default function SessionStats({gameID}) {
     // ----------------------- COMPONENT SETUP ------------------------ //
 
