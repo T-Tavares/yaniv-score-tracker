@@ -1,15 +1,21 @@
 import React from 'react';
 import classes from './Login.module.scss';
+
 import {_authGame} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
+
 import ModalBox from '../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
+
+import Rules from '../Rules/Rules.js';
+import {useRules} from '../Rules/useRules.js';
 
 export default function Login(props) {
     const {newGameHandler, loginHandler} = props;
     const {modal, setModal} = useModalBox();
+    const {isRulesOn, toggleRulesHandler} = useRules();
 
     // ---------------------------------------------------------------- //
     // ---------------------- LOGIN FORM HANDLER ---------------------- //
@@ -47,6 +53,7 @@ export default function Login(props) {
     return (
         <React.Fragment>
             {modal.state && <ModalBox />}
+            {isRulesOn && <Rules />}
             <div className={classes.login}>
                 <Button className={classes['new-game-btn']} text="New Game" callback={newGameHandler} />
                 <form className={classes['login-form']}>
@@ -55,6 +62,11 @@ export default function Login(props) {
                     <Input dataset={'password'} placeholder="Password"></Input>
                     <Button callback={formHandler} text="Login" />
                 </form>
+                <div>
+                    <Button text="Developer" callback={toggleRulesHandler} classes="test one two lala-la" />
+                    {/* <Button text="Rules" callback={toggleRulesHandler} className={classes['rules-btn']} /> */}
+                </div>
+
                 <a href="https://www.freepik.com/icon/joker_594660" target="_blank" rel="noreferrer">
                     Joker Icon by Freepik
                 </a>

@@ -1,0 +1,75 @@
+@import '../UI/_colours.module.scss';
+
+.rules-box {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+
+    height: calc(100% - 14vw);
+    width: calc(100% - 14vw);
+    margin: 2vw;
+    padding: 5vw;
+
+    border-radius: 3vw;
+
+    background-color: $bg;
+    z-index: 100;
+
+    overflow: scroll;
+    color: $rules-paragraph;
+
+    // list setup
+
+    ol {
+        padding: 0 0 0 1rem;
+    }
+    ul {
+        list-style: none;
+        padding: 1vw 3vw;
+        text-align: justify;
+    }
+    // Fonts and colours set up
+
+    p,
+    li {
+        text-align: justify;
+        margin-bottom: 1rem;
+        color: $rules-paragraph;
+    }
+    .subitem {
+        list-style: disc;
+        li {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    }
+    .subtitle {
+        color: $rules-header-2;
+    }
+
+    h2 {
+        align-self: center;
+        margin-bottom: 1rem;
+        color: $rules-header-1;
+    }
+}
+
+.close-btn {
+    position: fixed;
+    top: 7vw;
+    left: 7vw;
+    z-index: 100;
+    height: clamp(25px, 8vw, 50px);
+    width: clamp(25px, 8vw, 50px);
+
+    border: none;
+    border-radius: 50%;
+    background-color: $primary-btn;
+    color: $text-font-colour;
+
+    font-size: clamp(1rem, 4.5vw, 2rem);
+    font-weight: bolder;
+    transform: rotate(-45deg);
+    text-align: center;
+    text-justfy: center;
+}

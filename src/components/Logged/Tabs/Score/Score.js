@@ -42,16 +42,16 @@ export default function Score(props) {
         if (!areInputsNum || areInputsEmpty) return setModal({...modalObjInit, ...modalMsg.wrongInputs});
 
         // ----------------------- UPDATE DATABASE ------------------------ //
-        //TODO CHECK IF THIS DESCRIPTION MATCHS THE NEW FUNCTION
+
         /*  
             _updateScoreDB method will return an array of players if any player
             reach a multiple of 50 / 500 score and gets points deduced.
 
-            If not it'll return 'false'.
+            If not it'll return 'undefined'.
 
             This will be later used to render lucky players names on a modal.
-
         */
+
         const luckyPlayersIndexArr = await _updateScore(gameID, inputedScoreArr);
 
         // ---------------------- RERENDER NEW SCORE ---------------------- //

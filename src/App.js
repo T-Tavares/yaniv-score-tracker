@@ -4,10 +4,11 @@ import Login from './components/Login/Login.js';
 import NewGame from './components/New Game/NewGame.js';
 import Logged from './components/Logged/Logged.js';
 
+import {RulesProvider} from './components/Rules/useRules.js';
 import {ModalBoxProvider} from './components/UI/ModalBox/useModalBox.js';
+
 import {useState} from 'react';
 
-// TODO WORK ON A RULES AND HOW THE APP WORKS SECTION
 // TODO ADD DUMMY DATA TO ON GOING HOUSE GAME
 
 function App() {
@@ -45,11 +46,13 @@ function App() {
 
     return (
         <ModalBoxProvider>
-            <div className={classes.app}>
-                {/* <ModalBox /> */}
-                <Header logoutHandler={logoutHandler} />
-                <AppScreenEl />
-            </div>
+            <RulesProvider>
+                <div className={classes.app}>
+                    {/* <ModalBox /> */}
+                    <Header logoutHandler={logoutHandler} />
+                    <AppScreenEl />
+                </div>
+            </RulesProvider>
         </ModalBoxProvider>
     );
 }

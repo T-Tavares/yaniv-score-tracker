@@ -12,13 +12,21 @@ const db = getDatabase(firebaseApp);
 
 export async function _updateScore(id, scoreArr) {
     /* 
-        Most important function on the Score Section. Here all the other functions will
-        come together and make the magic happen.
-    */
+       This function will calculate the score and score deductions accorditg to the rules.
+       That's a meeting point of most of the other functions.
 
-    /* 
+        ------------------------------------------------------------
+
         The GhostSession was created to mitigate erros on counting the time of each session.
-        simple logins to check the score will not count as a session.
+        simple logins to check the score will not count as a session. after 90min of inactivity 
+        the duration of the session will be counted using the last score add activity
+
+        ------------------------------------------------------------
+
+        _updateScoreDB method will return an array of players if any player reach a multiple 
+        of 50 / 500 score and gets points deduced. If not it'll return 'undefined'.
+        
+        This will be later used to render lucky players names on a modal.
     */
 
     // PASS POINTS THROUGH RULES CHECK
