@@ -1,15 +1,15 @@
 .input {
     padding: 1rem;
 
-    margin: none;
+    margin: 0;
     border: none;
     border-radius: 0.5rem;
-
     outline: none;
 
     &:last-of-type {
         margin-bottom: 0.5rem;
     }
+    font-size: 16px;
 }
 .label:not(input) {
     &:first-of-type {
