@@ -17,9 +17,8 @@ export default function Login(props) {
     const {modal, setModal} = useModalBox();
     const {isRulesOn, toggleRulesHandler} = useRules();
 
-    // ---------------------------------------------------------------- //
     // ---------------------- LOGIN FORM HANDLER ---------------------- //
-    // ---------------------------------------------------------------- //
+
     const formHandler = async e => {
         e.preventDefault();
 
@@ -46,6 +45,11 @@ export default function Login(props) {
         setModal({...modalObjInit, ...modalMsg.userNotFound});
     };
 
+    // --------------------- GITHUB LINK HANDLER ---------------------- //
+    //  By using JS is easier and cleaner to add links to the component button
+
+    const githubHandler = () => window.open('https://github.com/T-Tavares', '_blank');
+
     // ---------------------------------------------------------------- //
     // ---------------------- Login.js COMPONENT ---------------------- //
     // ---------------------------------------------------------------- //
@@ -62,9 +66,9 @@ export default function Login(props) {
                     <Input dataset={'password'} placeholder="Password"></Input>
                     <Button callback={formHandler} text="Login" />
                 </form>
-                <div>
-                    <Button text="Developer" callback={toggleRulesHandler} classes="test one two lala-la" />
-                    {/* <Button text="Rules" callback={toggleRulesHandler} className={classes['rules-btn']} /> */}
+                <div className={classes['extra-btns']}>
+                    <Button text="My Github" callback={githubHandler} classes="small grey" />
+                    <Button text="Rules" callback={toggleRulesHandler} classes="small" />
                 </div>
 
                 <a href="https://www.freepik.com/icon/joker_594660" target="_blank" rel="noreferrer">

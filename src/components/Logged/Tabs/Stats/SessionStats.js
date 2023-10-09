@@ -4,8 +4,6 @@ import {_fetchLoggedGameData} from '../../../../database/firebaseUtils.js';
 
 import {getTimeStampNow, getTimeBetweenTimeStamps} from '../../../../helpers/Helpers.js';
 
-// TODO BLANK SESSION STATS SECTION IF LAST TIME STAMP IS > 90 MIN
-
 export default function SessionStats({gameID}) {
     // ----------------------- COMPONENT SETUP ------------------------ //
 
@@ -119,18 +117,36 @@ export default function SessionStats({gameID}) {
         return <StatsBox type="box" value={avgTime} title="Avg Time p/ Round" unit="min" />;
     }
 
+    function blankSessionCheck() {
+        if (!gameData) return;
+        if (getTimeBetweenTimeStamps(gameData.stats.lastTimeStamp, gameData.stats.ghostTimeStamp, 'min') > 90) {
+            return true;
+        }
+        return false;
+    }
+
+    function blankSession() {
+        if (!gameData) return;
+        if (blankSessionCheck()) {
+            return <StatsBox type="rectangle" title="A new session will start when you log a new score." />;
+        }
+    }
+
     // -------- JSX VARIABLES OF COMPONENTS WITH FORMATED DATA -------- //
 
-    const winnersComponent = sessionRoundsWinners();
-    const totalRoundsComponent = sessionTotalRounds();
-    const durationComponent = sessionDuration();
-    const avgTimePerRoundComponent = avgTimePerRound();
+    const blankSessionComponent = blankSession();
+
+    const winnersComponent = !blankSessionCheck() ? sessionRoundsWinners() : '';
+    const totalRoundsComponent = !blankSessionCheck() ? sessionTotalRounds() : '';
+    const durationComponent = !blankSessionCheck() ? sessionDuration() : '';
+    const avgTimePerRoundComponent = !blankSessionCheck() ? avgTimePerRound() : '';
 
     // ---------------------------------------------------------------- //
     // -------------------- SessionStats COMPONENT -------------------- //
     // ---------------------------------------------------------------- //
     return (
         <Fragment>
+            {blankSessionComponent}
             {winnersComponent}
             {totalRoundsComponent}
             {avgTimePerRoundComponent}

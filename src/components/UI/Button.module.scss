@@ -10,3 +10,21 @@
     color: #fff;
     font-size: 1.2rem;
 }
+.round {
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    height: 65px;
+    width: 65px;
+    margin: 0;
+}
+
+.grey {
+    background-color: #3f3f3f;
+}
+
+.small {
+    font-size: 1rem;
+    height: 40px;
+    margin: 0 0 1rem 0;
+    line-height: 0;
+}

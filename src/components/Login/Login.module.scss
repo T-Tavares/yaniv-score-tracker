@@ -24,3 +24,12 @@
     margin-top: auto;
     margin-bottom: 1rem;
 }
+
+.extra-btns {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+        width: 48%;
+    }
+}

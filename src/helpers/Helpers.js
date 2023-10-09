@@ -35,6 +35,15 @@ export function getTimeBetweenTimeStamps(start, end, unit) {
     return millisecondsToDecimal(timeFrameStamp, unit);
 }
 
+export function getDayFromTimeStamp(timeStamp) {
+    const date = new Date(timeStamp);
+    return date.getDay();
+}
+
+export function ocurrencesOf(value, arr) {
+    return arr.reduce((acc, currVal) => (currVal === value ? acc + 1 : acc), 0);
+}
+
 // console.log(getTimeStampNow());
 // console.log(new Date('2 Oct 2023 10:42:00').getTime());
 // console.log(new Date(1695985200000));

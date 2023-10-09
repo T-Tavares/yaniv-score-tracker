@@ -1,6 +1,8 @@
 import React, {Fragment, useState, useEffect} from 'react';
 import StatsBox from './StatsBox/StatsBox.js';
+import StatsGraph from './StatsGraph/StatsGraph.js';
 import {_fetchLoggedGameData} from '../../../../database/firebaseUtils.js';
+import {getDayFromTimeStamp, ocurrencesOf} from '../../../../helpers/Helpers.js';
 
 export default function GameStats({gameID}) {
     // TODO CREATE LOADING UI WHEEL
@@ -84,7 +86,11 @@ export default function GameStats({gameID}) {
 
     function getLastGameDate() {
         if (!gameData) return;
-        const lastGameTimeStamp = gameData.stats.sessions.slice(-1)[0].sessionID;
+        // const lastGameTimeStamp = gameData.stats.sessions.slice(-1)[0].sessionID;
+        /*  
+            Old way, last session time stamp, kept for reference 
+        */
+        const lastGameTimeStamp = gameData.stats.lastTimeStamp;
         const options = {year: 'numeric', month: 'short', day: 'numeric'};
         const lastGameDate = new Date(lastGameTimeStamp).toLocaleDateString('en-AU', options);
 
@@ -142,7 +148,27 @@ export default function GameStats({gameID}) {
         });
     }
 
-    // TODO DAY OF WEEK WE PLAY MORE OFTEN
+    function weekDaysActivityGraph() {
+        if (!gameData) return;
+
+        const days = [0, 1, 2, 3, 4, 5, 6]; // days array for the forEach Looping reference
+        const percentageArray = new Array(7); // empty array for the percentage of each day
+
+        const sessionsCountArr = gameData.stats.sessions.map(session => getDayFromTimeStamp(session.sessionID)); // week days array count
+        const totalSessions = gameData.stats.totalSessions; // total sessions to calculate percentage
+
+        /* 
+            For Loop to calculate percentage of occurence for each day and feed the percentageArray with the values
+        */
+        days.forEach((day, index) => {
+            const ocurrenceDecimal = +(ocurrencesOf(day, sessionsCountArr) / totalSessions).toFixed(2);
+            percentageArray[index] = ocurrenceDecimal * 100;
+        });
+
+        // return Week Activity Graph Component
+
+        return <StatsGraph percentageArr={percentageArray} />;
+    }
 
     // -------- JSX VARIABLES OF COMPONENTS WITH FORMATED DATA -------- //
 
@@ -153,11 +179,13 @@ export default function GameStats({gameID}) {
     const timeComponent = getTotals('rectangle', 'totalTime');
     const roundsComponent = getTotals('box', 'totalRounds');
     const sessionsComponent = getTotals('box', 'totalSessions');
+
     const gameWinnersComponent = getCurrWinners();
     const lastSessionComponent = getLastGameDate();
     const avgRoundsComponent = getAvgRoundsPerSession(roundsValue, sessionsValue);
     const avgTimeComponent = getAvgTimePerSession(timeValue, sessionsValue);
     const topRoundsWinnersComponent = getTopRoundsWinner();
+    const weekDayActivityGraph = weekDaysActivityGraph();
 
     // ---------------------------------------------------------------- //
     // -------------------- SessionStats COMPONENT -------------------- //
@@ -166,12 +194,18 @@ export default function GameStats({gameID}) {
     return (
         <Fragment>
             {gameWinnersComponent}
+
             {roundsComponent}
             {avgRoundsComponent}
             {topRoundsWinnersComponent}
+
+            {weekDayActivityGraph}
+
             {sessionsComponent}
             {avgTimeComponent}
+
             {timeComponent}
+
             {lastSessionComponent}
         </Fragment>
     );
