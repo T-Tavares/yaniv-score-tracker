@@ -1,12 +1,11 @@
 import React, {Fragment, useState, useEffect} from 'react';
 import StatsBox from './StatsBox/StatsBox.js';
 import StatsGraph from './StatsGraph/StatsGraph.js';
+
 import {_fetchLoggedGameData} from '../../../../database/firebaseUtils.js';
 import {getDayFromTimeStamp, ocurrencesOf} from '../../../../helpers/Helpers.js';
 
 export default function GameStats({gameID}) {
-    // TODO CREATE LOADING UI WHEEL
-
     // ----------------------- COMPONENT SETUP ------------------------ //
 
     // useState to hold Data
@@ -150,6 +149,7 @@ export default function GameStats({gameID}) {
 
     function weekDaysActivityGraph() {
         if (!gameData) return;
+        if (!gameData.stats.sessions) return;
 
         const days = [0, 1, 2, 3, 4, 5, 6]; // days array for the forEach Looping reference
         const percentageArray = new Array(7); // empty array for the percentage of each day
@@ -170,22 +170,37 @@ export default function GameStats({gameID}) {
         return <StatsGraph percentageArr={percentageArray} />;
     }
 
+    function blankStatsCheck() {
+        if (!gameData) return;
+        if (!gameData.stats.sessions) return true;
+        return false;
+    }
+
+    function blankStats() {
+        if (!gameData) return;
+        if (blankStatsCheck()) {
+            return <StatsBox type="rectangle" title="Your Game Stats will be calculated from your second Session." />;
+        }
+    }
+
     // -------- JSX VARIABLES OF COMPONENTS WITH FORMATED DATA -------- //
 
-    const roundsValue = getTotals('_', 'totalRounds', 'value');
-    const sessionsValue = getTotals('_', 'totalSessions', 'value');
-    const timeValue = getTotals('_', 'totalTime', 'value');
+    const roundsValue = !blankStatsCheck() ? getTotals('_', 'totalRounds', 'value') : '';
+    const sessionsValue = !blankStatsCheck() ? getTotals('_', 'totalSessions', 'value') : '';
+    const timeValue = !blankStatsCheck() ? getTotals('_', 'totalTime', 'value') : '';
 
-    const timeComponent = getTotals('rectangle', 'totalTime');
-    const roundsComponent = getTotals('box', 'totalRounds');
-    const sessionsComponent = getTotals('box', 'totalSessions');
+    const timeComponent = !blankStatsCheck() ? getTotals('rectangle', 'totalTime') : '';
+    const roundsComponent = !blankStatsCheck() ? getTotals('box', 'totalRounds') : '';
+    const sessionsComponent = !blankStatsCheck() ? getTotals('box', 'totalSessions') : '';
 
-    const gameWinnersComponent = getCurrWinners();
-    const lastSessionComponent = getLastGameDate();
-    const avgRoundsComponent = getAvgRoundsPerSession(roundsValue, sessionsValue);
-    const avgTimeComponent = getAvgTimePerSession(timeValue, sessionsValue);
-    const topRoundsWinnersComponent = getTopRoundsWinner();
-    const weekDayActivityGraph = weekDaysActivityGraph();
+    const gameWinnersComponent = !blankStatsCheck() ? getCurrWinners() : '';
+    const lastSessionComponent = !blankStatsCheck() ? getLastGameDate() : '';
+    const avgRoundsComponent = !blankStatsCheck() ? getAvgRoundsPerSession(roundsValue, sessionsValue) : '';
+    const avgTimeComponent = !blankStatsCheck() ? getAvgTimePerSession(timeValue, sessionsValue) : '';
+    const topRoundsWinnersComponent = !blankStatsCheck() ? getTopRoundsWinner() : '';
+    const weekDayActivityGraph = !blankStatsCheck() ? weekDaysActivityGraph() : '';
+
+    const blankSessionComponent = !blankStatsCheck() ? '' : blankStats();
 
     // ---------------------------------------------------------------- //
     // -------------------- SessionStats COMPONENT -------------------- //
@@ -193,6 +208,7 @@ export default function GameStats({gameID}) {
 
     return (
         <Fragment>
+            {blankSessionComponent}
             {gameWinnersComponent}
 
             {roundsComponent}

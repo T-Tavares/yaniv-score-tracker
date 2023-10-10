@@ -3,12 +3,14 @@ import classes from './Score.module.scss';
 
 import {_fetchLoggedGameData, _updateScore} from '../../../../database/firebaseUtils.js';
 
+import Loading from '../../../UI/Loading.js';
 import ScoreList from './ScoreList.js';
 import ModalBox from '../../../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../../../UI/ModalBox/useModalBox.js';
 
 export default function Score(props) {
     const [scoreData, setScoreData] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const {modal, setModal} = useModalBox();
 
     const gameID = props.gameID;
@@ -30,6 +32,7 @@ export default function Score(props) {
 
     async function addToScoreHandler(e) {
         e.preventDefault();
+        setIsLoading(true);
         // ----------------------- GET USER INPUTS  ----------------------- //
 
         const inputsArrEls = [...e.target.querySelectorAll('input')];
@@ -67,6 +70,7 @@ export default function Score(props) {
 
         // ------------------------- CLEAR INPUTS ------------------------- //
         inputsArrEls.forEach(inp => (inp.value = ''));
+        setIsLoading(false);
     }
 
     // ---------------------- HANDLER FUNCTIONS ----------------------- //
@@ -110,6 +114,7 @@ export default function Score(props) {
         <React.Fragment>
             {modal.state && <ModalBox />}
             <form onSubmit={addToScoreHandler}>
+                {isLoading && <Loading />}
                 <table className={classes[`score-table`]}>
                     <thead>
                         <tr className={classes['table-header']}>

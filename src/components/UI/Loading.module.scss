@@ -1,0 +1,35 @@
+@import './colours.module.scss';
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    background-color: $stats-box-background-colour;
+    z-index: 2;
+
+    &::before {
+        content: '';
+        display: flex;
+
+        height: 10vw;
+        width: 10vw;
+
+        border-radius: 50%;
+        background: conic-gradient($stats-box-background-colour 20%, #821414);
+
+        animation: loading 0.8s linear infinite;
+    }
+    @keyframes loading {
+        to {
+            transform: rotate(1turn);
+        }
+    }
+}

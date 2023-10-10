@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import classes from './Login.module.scss';
 
 import {_authGame} from '../../database/firebaseUtils.js';
 
 import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
+
+import Loading from '../UI/Loading.js';
 
 import ModalBox from '../UI/ModalBox/ModalBox.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
@@ -16,6 +18,7 @@ export default function Login(props) {
     const {newGameHandler, loginHandler} = props;
     const {modal, setModal} = useModalBox();
     const {isRulesOn, toggleRulesHandler} = useRules();
+    const [isLoading, setIsLoading] = useState(false);
 
     // ---------------------- LOGIN FORM HANDLER ---------------------- //
 
@@ -29,6 +32,7 @@ export default function Login(props) {
 
         // ------- CHECK IF USER AND PASSWORD ARE VALID ON DATABASE ------- //
         const isAuthenticated = new Promise((resolve, reject) => {
+            setIsLoading(true);
             try {
                 const isAuthenticated = _authGame(inputGameName, inputPassword);
                 resolve(isAuthenticated);
@@ -40,6 +44,7 @@ export default function Login(props) {
 
         // -------- IF USER AND PASSWORD ARE VALID, LOGIN TO GAME --------- //
         if (await isAuthenticated) return loginHandler(await isAuthenticated);
+        setIsLoading(false);
 
         // ------ RENDER MODAL IF USER / PASSWORD IS NOT FOUND ON DB ------ //
         setModal({...modalObjInit, ...modalMsg.userNotFound});
@@ -58,6 +63,7 @@ export default function Login(props) {
         <React.Fragment>
             {modal.state && <ModalBox />}
             {isRulesOn && <Rules />}
+            {isLoading && <Loading />}
             <div className={classes.login}>
                 <Button className={classes['new-game-btn']} text="New Game" callback={newGameHandler} />
                 <form className={classes['login-form']}>

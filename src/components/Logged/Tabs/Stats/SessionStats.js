@@ -86,6 +86,8 @@ export default function SessionStats({gameID}) {
         const rounds = gameData.stats.currSession.rounds;
 
         if (returnType === 'value') return rounds;
+        if (rounds === 0)
+            return <StatsBox type="rectangle" title="More Stats will be calculated as your game progress" />;
         return <StatsBox type="box" value={rounds} title="Rounds" />;
     }
 
@@ -114,6 +116,7 @@ export default function SessionStats({gameID}) {
         const rounds = sessionTotalRounds('value');
         const avgTime = (duration / rounds).toFixed(0);
 
+        if (duration === 0 || rounds === 0) return '';
         return <StatsBox type="box" value={avgTime} title="Avg Time p/ Round" unit="min" />;
     }
 

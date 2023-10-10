@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import classes from './NewGame.module.scss';
 
@@ -6,12 +6,14 @@ import Button from '../UI/Button.js';
 import Input from '../UI/Input.js';
 import PlayersInput from './PlayersInput.js';
 import ModalBox from '../UI/ModalBox/ModalBox.js';
+import Loading from '../UI/Loading.js';
 
 import {_createNewGame} from '../../database/firebaseUtils.js';
 import {useModalBox, modalObjInit, modalMsg} from '../UI/ModalBox/useModalBox.js';
 
 export default function NewGame(props) {
     const {modal, setModal} = useModalBox();
+    const [isLoading, setIsLoading] = useState(false);
 
     const newGameHandler = async e => {
         e.preventDefault();
@@ -43,13 +45,14 @@ export default function NewGame(props) {
         // ---------------------------------------------------------------- //
         // ------------- CREATE NEW GAME AND UPDATE DATABASE -------------- //
         // ---------------------------------------------------------------- //
-
+        setIsLoading(true);
         const newGameID = await _createNewGame(gameName, gamePassword, gamePlayers);
 
         if (newGameID === undefined || newGameID === null)
             return setModal({...modalObjInit, ...modalMsg.duplicateGameName});
 
         props.loginHandler(newGameID);
+        setIsLoading(false);
     };
 
     // ---------------------------------------------------------------- //
@@ -58,6 +61,7 @@ export default function NewGame(props) {
     return (
         <React.Fragment>
             {modal.state && <ModalBox />}
+            {isLoading && <Loading />}
             <form onSubmit={newGameHandler} className={classes['new-game-form']}>
                 <Input data-game-title="gameTitle" label="Game Name" placeholder="Chose your Game Name" />
                 <PlayersInput />

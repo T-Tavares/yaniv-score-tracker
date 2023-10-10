@@ -3,7 +3,7 @@ import React from 'react';
 
 export default function Input(props) {
     let inputMode,
-        pattern = '';
+        pattern = '[a-zA-Z0-9-]';
     // Number Inputs display a number Keyboard on Mobile
     if (props.type === 'number') {
         inputMode = 'numeric';

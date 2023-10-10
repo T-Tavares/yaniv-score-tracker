@@ -48,7 +48,6 @@ function App() {
         <ModalBoxProvider>
             <RulesProvider>
                 <div className={classes.app}>
-                    {/* <ModalBox /> */}
                     <Header logoutHandler={logoutHandler} />
                     <AppScreenEl />
                 </div>

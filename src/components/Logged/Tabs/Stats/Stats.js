@@ -31,20 +31,3 @@ export default function Stats(props) {
         </div>
     );
 }
-
-/* 
-
-    return (
-        <div className={classes.stats}>
-            <button className={`${classes['stats-btn']} ${classes.active}`}>Session Stats</button>
-            <button className={`${classes['stats-btn']}`}>Game Stats</button>
-            <div className={`${classes['stats-session']}`}>
-                <StatsBox type="rectangle" title="Current Winner" value="Alina" />
-                <StatsBox type="box" title="Rounds" value="100" unit="Rounds" />
-                <StatsBox type="box" title="Min Played" value="100" unit="min" />
-                <StatsBox type="rectangle" title="Most Rounds Won" value="Alina" />
-                <StatsBox type="rectangle" title="Time Played" value="32 min" unit="min" />
-            </div>
-        </div>
-    );
-*/
